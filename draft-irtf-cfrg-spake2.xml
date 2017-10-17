@@ -7,7 +7,7 @@
 <rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-03" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
-    <author fullname="Watson Ladd" surname="Ladd">
+    <author fullname="Watson Ladd" initials="W." surname="Ladd">
       <organization>UC Berkeley</organization>
       <address>
         <email>watsonbladd@gmail.com</email>
