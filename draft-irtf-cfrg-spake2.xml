@@ -10,19 +10,19 @@
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
       <organization>UC Berkeley</organization>
       <address>
-        <email>watsonbladd@gmail.com</email>
+	<email>watsonbladd@gmail.com</email>
       </address>
     </author>
     <author role="editor" initials="B." surname="Kaduk" fullname="Benjamin Kaduk">
       <organization abbrev="Akamai">Akamai Technologies</organization>
       <address>
-        <email>kaduk@mit.edu</email>
+	<email>kaduk@mit.edu</email>
       </address>
     </author>
     <date month="October" year="2017"/>
     <abstract>
       <t>This Internet-Draft describes SPAKE2, a secure, efficient password
-        based key exchange protocol.</t>
+	based key exchange protocol.</t>
     </abstract>
   </front>
   <middle>
@@ -161,21 +161,29 @@ N =
       <t>The following python snippet generates the above points:</t>
 
       <figure><artwork><![CDATA[
-def canon_pointstr(self, s):        return chr(ord(s[0]) & 1 | 2) +
-s[1:]
+def canon_pointstr(self, s):
+    return chr(ord(s[0]) & 1 | 2) + s[1:]
 
-def iterated_hash(seed, n):      h = seed      for i in xrange(n):   
-     h = SHA256.new(h).digest()      return h
+def iterated_hash(seed, n):
+    h = seed
+    for i in xrange(n):
+	h = SHA256.new(h).digest()
+    return h
 
- def bighash(seed, start, sz):      n = -(-sz // 32)      hashes =
-[iterated_hash(seed, i) for i in xrange(start, start + n)]     
-return ''.join(hashes)[:sz]
+def bighash(seed, start, sz):
+    n = -(-sz // 32)
+    hashes = [iterated_hash(seed, i) for i in xrange(start, start + n)]
+    return ''.join(hashes)[:sz]
 
- def gen_point(seed, ec, order):      for i in xrange(1, 1000):     
-   pointstr = ec.canon_pointstr(bighash(seed, i, ec.nbytes_point()))
-	try:              p = ec.decode_point(pointstr)             
-if ec.mul(p, order) == ec.identity():                  return
-pointstr, i          except Exception:              pass
+def gen_point(seed, ec, order):
+    for i in xrange(1, 1000):
+	pointstr = ec.canon_pointstr(bighash(seed, i, ec.nbytes_point()))
+	try:
+	    p = ec.decode_point(pointstr)
+	    if ec.mul(p, order) == ec.identity():
+		return pointstr, i
+	except Exception:
+	    pass
 ]]></artwork></figure>
     </section>
     <section title="Security Considerations">
