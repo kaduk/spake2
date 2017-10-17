@@ -10,119 +10,119 @@
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
       <organization>UC Berkeley</organization>
       <address>
-	<email>watsonbladd@gmail.com</email>
+        <email>watsonbladd@gmail.com</email>
       </address>
     </author>
     <author role="editor" initials="B." surname="Kaduk" fullname="Benjamin Kaduk">
       <organization abbrev="Akamai">Akamai Technologies</organization>
       <address>
-	<email>kaduk@mit.edu</email>
+        <email>kaduk@mit.edu</email>
       </address>
     </author>
     <date month="October" year="2017"/>
     <abstract>
       <t>This Internet-Draft describes SPAKE2, a secure, efficient password
-	based key exchange protocol.</t>
+        based key exchange protocol.</t>
     </abstract>
   </front>
   <middle>
     <section anchor="intro" title="Introduction">
       <t>This document describes a means for two parties that share a password
-	to derive a shared key. This method is compatible with any group, is
-	computationally efficient, and has a strong security proof.</t>
+        to derive a shared key. This method is compatible with any group, is
+        computationally efficient, and has a strong security proof.</t>
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup">
-	<t>Let G be a group in which the Diffie-Hellman problem is hard of
-	  order ph, with p a big prime and h a cofactor. We denote the
-	  operations in the group additively. Let H be a hash function from
-	  arbitrary strings to bit strings of a fixed length. Common choices
-	  for H are SHA256 or SHA512. We assume there is a representation of
-	  elements of G as byte strings: common choices would be SEC1
-	  uncompressed <xref target="SEC1" /> for elliptic curve groups or big
-	  endian integers of a particular length for prime field DH.</t>
+        <t>Let G be a group in which the Diffie-Hellman problem is hard of
+          order ph, with p a big prime and h a cofactor. We denote the
+          operations in the group additively. Let H be a hash function from
+          arbitrary strings to bit strings of a fixed length. Common choices
+          for H are SHA256 or SHA512. We assume there is a representation of
+          elements of G as byte strings: common choices would be SEC1
+          uncompressed <xref target="SEC1" /> for elliptic curve groups or big
+          endian integers of a particular length for prime field DH.</t>
 
-	<t>|| denotes concatenation of strings. We also let len(S) denote the
-	  length of a string in bytes, represented as an eight-byte little-
-	  endian number.</t>
+        <t>|| denotes concatenation of strings. We also let len(S) denote the
+          length of a string in bytes, represented as an eight-byte little-
+          endian number.</t>
 
-	<t>We fix two elements M and N as defined in the table in this document
-	  for common groups, as well as a generator G of the group. G is
-	  specified in the document defining the group, and so we do not recall
-	  it here.</t>
+        <t>We fix two elements M and N as defined in the table in this document
+          for common groups, as well as a generator G of the group. G is
+          specified in the document defining the group, and so we do not recall
+          it here.</t>
 
-	<t>Let A and B be two parties. We will assume that A and B are also
-	  representations of the parties such as MAC addresses or other names
-	  (hostnames, usernames, etc). We assume they share an integer w.
-	  Typically w will be the hash of a user-supplied password, truncated
-	  and taken mod p. Protocols using this protocol must define the method
-	  used to compute w: it may be necessary to carry out normalization.
-	  The hashing algorithm SHOULD be designed to slow down brute force
-	  attackers.</t>
+        <t>Let A and B be two parties. We will assume that A and B are also
+          representations of the parties such as MAC addresses or other names
+          (hostnames, usernames, etc). We assume they share an integer w.
+          Typically w will be the hash of a user-supplied password, truncated
+          and taken mod p. Protocols using this protocol must define the method
+          used to compute w: it may be necessary to carry out normalization.
+          The hashing algorithm SHOULD be designed to slow down brute force
+          attackers.</t>
 
-	<t>We present two protocols below. Note that it is insecure to use the
-	  same password with both protocols, this MUST NOT be done.</t>
+        <t>We present two protocols below. Note that it is insecure to use the
+          same password with both protocols, this MUST NOT be done.</t>
       </section>
       <section title="SPAKE2">
-	<t>A picks x randomly and uniformly from the integers in [0,ph)
-	  divisible by h, and calculates X=xG and T=wM+X, then transmits T to
-	  B.</t>
+        <t>A picks x randomly and uniformly from the integers in [0,ph)
+          divisible by h, and calculates X=xG and T=wM+X, then transmits T to
+          B.</t>
 
-	<t>B selects y randomly and uniformly from the integers in [0,ph),
-	  divisible by h and calculates Y=yG, S=wN+Y, then transmits S to A.</t>
+        <t>B selects y randomly and uniformly from the integers in [0,ph),
+          divisible by h and calculates Y=yG, S=wN+Y, then transmits S to A.</t>
 
-	<t>Both A and B calculate a group element K. A calculates it as
-	  x(S-wN), while B calculates it as y(T-wM). A knows S because it has
-	  received it, and likewise B knows T.</t>
+        <t>Both A and B calculate a group element K. A calculates it as
+          x(S-wN), while B calculates it as y(T-wM). A knows S because it has
+          received it, and likewise B knows T.</t>
 
-	<t>This K is a shared secret, but the scheme as described is not secure.
-	  K  MUST be combined with the values transmitted and received via a
-	  hash function to have a secure protocol. If higher-level protocols
-	  prescribe a method for doing so, that SHOULD be used. Otherwise we
-	  can compute K' as H(len(A)||A||len(B)||B||len(S)||S||
-	  len(T)||T||len(K)||K || len(w) || w) and use K' as the key.</t>
+        <t>This K is a shared secret, but the scheme as described is not secure.
+          K  MUST be combined with the values transmitted and received via a
+          hash function to have a secure protocol. If higher-level protocols
+          prescribe a method for doing so, that SHOULD be used. Otherwise we
+          can compute K' as H(len(A)||A||len(B)||B||len(S)||S||
+          len(T)||T||len(K)||K || len(w) || w) and use K' as the key.</t>
       </section>
       <section title="SPAKE2+">
-	<t>This protocol and security proof appear in <xref target="TDH" />. We
-	  use the same setup as for SPAKE2, except that we have two secrets, w0
-	  and w1. The server, here Bob, stores L=w1*g and w0.</t>
+        <t>This protocol and security proof appear in <xref target="TDH" />. We
+          use the same setup as for SPAKE2, except that we have two secrets, w0
+          and w1. The server, here Bob, stores L=w1*g and w0.</t>
 
-	<t>When executing SPAKE2+, A selects x uniformly at random from the
-	  numbers in the range [0, ph) divisible by h, and lets X=xG+w0*M, then
-	  transmits X to B. B selects y uniformly at random from the numbers in
-	  [0, ph) divisible by h, then computes Y=yG+w0*N, and transmits it to
-	  Alice.</t>
+        <t>When executing SPAKE2+, A selects x uniformly at random from the
+          numbers in the range [0, ph) divisible by h, and lets X=xG+w0*M, then
+          transmits X to B. B selects y uniformly at random from the numbers in
+          [0, ph) divisible by h, then computes Y=yG+w0*N, and transmits it to
+          Alice.</t>
 
-	<t>A computes Z as x(Y-w0*N), and V as w1(Y-w0*N). B computes Z as y(X-
-	  w0*M) and V as yL. Both share Z and V as common keys. It is essential
-	  that both Z and V be used in combination with the transcript to
-	  derive the keying material. For higher-level protocols without
-	  sufficient transcript hashing, let K' be
-	  H(len(A)||A||len(B)||B||len(X)||X||len(Y)||Y||len(Z)||Z||len(V)||V)
-	  and use K' as the established key.</t>
+        <t>A computes Z as x(Y-w0*N), and V as w1(Y-w0*N). B computes Z as y(X-
+          w0*M) and V as yL. Both share Z and V as common keys. It is essential
+          that both Z and V be used in combination with the transcript to
+          derive the keying material. For higher-level protocols without
+          sufficient transcript hashing, let K' be
+          H(len(A)||A||len(B)||B||len(X)||X||len(Y)||Y||len(Z)||Z||len(V)||V)
+          and use K' as the established key.</t>
       </section>
     </section>
     <section title="Table of points for common groups">
       <t>Every curve presented in the table below has an OID from <xref
-	target="RFC5480" />. We construct a string using the OID and the needed
-	constant, for instance "1.3.132.0.35 point generation seed (M)" for
-	P-512.  This string is turned into an infinite sequence of bytes by
-	hashing with SHA256, and hashing that output again to generate the next
-	32 bytes, and so on. This pattern is repeated for each group and value,
-	with the string modified appropriately.</t>
+        target="RFC5480" />. We construct a string using the OID and the needed
+        constant, for instance "1.3.132.0.35 point generation seed (M)" for
+        P-512.  This string is turned into an infinite sequence of bytes by
+        hashing with SHA256, and hashing that output again to generate the next
+        32 bytes, and so on. This pattern is repeated for each group and value,
+        with the string modified appropriately.</t>
 
       <t>The initial segment of bytes of length equal to that of an encoded
-	group element is taken, and is then formatted as required for the
-	group.  In the case of Weierstrass points, this means setting the first
-	byte to 0x02 or 0x03 depending on the low-order bit. For Ed25519 style
-	formats this means taking all the bytes as the representation of the
-	group element.  This string of bytes is then interpreted as a point in
-	the group. If this is impossible, then the next non-overlapping segment
-	of sufficient length is taken. We multiply that point by the cofactor
-	h, and if that is not the identity, output it.</t>
+        group element is taken, and is then formatted as required for the
+        group.  In the case of Weierstrass points, this means setting the first
+        byte to 0x02 or 0x03 depending on the low-order bit. For Ed25519 style
+        formats this means taking all the bytes as the representation of the
+        group element.  This string of bytes is then interpreted as a point in
+        the group. If this is impossible, then the next non-overlapping segment
+        of sufficient length is taken. We multiply that point by the cofactor
+        h, and if that is not the identity, output it.</t>
 
       <t>These bytestrings are compressed points as in <xref target="SEC1" />
-	for curves from <xref target="SEC1" />.</t>
+        for curves from <xref target="SEC1" />.</t>
 
       <t>For P256:</t>
 
@@ -167,7 +167,7 @@ def canon_pointstr(self, s):
 def iterated_hash(seed, n):
     h = seed
     for i in xrange(n):
-	h = SHA256.new(h).digest()
+        h = SHA256.new(h).digest()
     return h
 
 def bighash(seed, start, sz):
@@ -177,98 +177,98 @@ def bighash(seed, start, sz):
 
 def gen_point(seed, ec, order):
     for i in xrange(1, 1000):
-	pointstr = ec.canon_pointstr(bighash(seed, i, ec.nbytes_point()))
-	try:
-	    p = ec.decode_point(pointstr)
-	    if ec.mul(p, order) == ec.identity():
-		return pointstr, i
-	except Exception:
-	    pass
+        pointstr = ec.canon_pointstr(bighash(seed, i, ec.nbytes_point()))
+        try:
+            p = ec.decode_point(pointstr)
+            if ec.mul(p, order) == ec.identity():
+                return pointstr, i
+        except Exception:
+            pass
 ]]></artwork></figure>
     </section>
     <section title="Security Considerations">
       <t>A security proof of SPAKE2 for prime order groups is found in <xref
-	  target="REF" />.  Note that the choice of M and N is critical for the
-	security proof.  The generation method specified in this document is
-	designed to eliminate concerns related to knowing discrete logs of M
-	and N.</t>
+          target="REF" />.  Note that the choice of M and N is critical for the
+        security proof.  The generation method specified in this document is
+        designed to eliminate concerns related to knowing discrete logs of M
+        and N.</t>
 
       <t>SPAKE2+ appears in <xref target="TDH" />, along with proof.</t>
 
       <t>There is no key-confirmation as this is a one round protocol. It is
-	expected that a protocol using this key exchange mechanism provides key
-	confirmation separately if desired.</t>
+        expected that a protocol using this key exchange mechanism provides key
+        confirmation separately if desired.</t>
 
       <t>Elements should be checked for group membership: failure to properly
-	validate group elements can lead to attacks. In particular it is
-	essential to verify that received points are valid compressions of
-	points on an elliptic curve when using elliptic curves. It is not
-	necessary to validate membership in the prime order subgroup: the
-	multiplication by cofactors eliminates this issue.</t>
+        validate group elements can lead to attacks. In particular it is
+        essential to verify that received points are valid compressions of
+        points on an elliptic curve when using elliptic curves. It is not
+        necessary to validate membership in the prime order subgroup: the
+        multiplication by cofactors eliminates this issue.</t>
 
       <t>The choices of random numbers MUST BE uniform. Note that to pick a
-	random multiple of h in [0, ph) one can pick a random integer in [0,p)
-	and multiply by h. Reuse of ephemerals results in dictionary attacks
-	and MUST NOT be done.</t>
+        random multiple of h in [0, ph) one can pick a random integer in [0,p)
+        and multiply by h. Reuse of ephemerals results in dictionary attacks
+        and MUST NOT be done.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server has to
-	store a password equivalent. This is considered a significant drawback,
-	and so SPAKE2+ also appears in this document.</t>
+        store a password equivalent. This is considered a significant drawback,
+        and so SPAKE2+ also appears in this document.</t>
 
       <t>As specified the shared secret K is not suitable for use as a shared
-	key.  It MUST be passed to a hash function along with the public values
-	used to derive it and the party identities to avoid attacks.  In
-	protocols which do not perform this separately, the value denoted K'
-	MUST be used instead.</t>
+        key.  It MUST be passed to a hash function along with the public values
+        used to derive it and the party identities to avoid attacks.  In
+        protocols which do not perform this separately, the value denoted K'
+        MUST be used instead.</t>
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
     </section>
     <section title="Acknowledgments">
       <t>Special thanks to Nathaniel McCallum for generation of test vectors.
-	Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
-	Hudson suggested addition of warnings on the reuse of x and y. Thanks
-	to Fedor Brunner, Adam Langley, and the members of the CFRG for
-	comments and advice. Trevor Perrin informed me of SPAKE2+.</t>
+        Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
+        Hudson suggested addition of warnings on the reuse of x and y. Thanks
+        to Fedor Brunner, Adam Langley, and the members of the CFRG for
+        comments and advice. Trevor Perrin informed me of SPAKE2+.</t>
     </section>
   </middle>
   <back>
     <references title="References">
       <reference anchor="REF">
-	<front>
-	  <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
-	  <author initials="M." surname="Abdalla" />
-	  <author initials="D." surname="Pointcheval" />
-	  <date month="Feb" year="2005" />
-	</front>
-	<annotation>Appears in A. Menezes, editor. Topics in
-	  Cryptography-CT-RSA 2005, Volume 3376 of Lecture Notes in Computer
-	  Science, pages 191-208, San Francisco, CA, US.  Springer-Verlag,
-	  Berlin, Germany.
-	</annotation>
+        <front>
+          <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
+          <author initials="M." surname="Abdalla" />
+          <author initials="D." surname="Pointcheval" />
+          <date month="Feb" year="2005" />
+        </front>
+        <annotation>Appears in A. Menezes, editor. Topics in
+          Cryptography-CT-RSA 2005, Volume 3376 of Lecture Notes in Computer
+          Science, pages 191-208, San Francisco, CA, US.  Springer-Verlag,
+          Berlin, Germany.
+        </annotation>
       </reference>
       <reference anchor="SEC1">
-	<front>
-	  <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
-	    Cryptography", version 2.0</title>
-	  <author>
-	    <organization>SEC</organization>
-	  </author>
-	  <date month="May" year="2009" />
-	</front>
-	<format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
+        <front>
+          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
+            Cryptography", version 2.0</title>
+          <author>
+            <organization>SEC</organization>
+          </author>
+          <date month="May" year="2009" />
+        </front>
+        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
       </reference>
       <reference anchor="TDH">
-	<front>
-	  <title>The Twin-Diffie Hellman Problem and Applications</title>
-	  <author initials="D." surname="Cash" />
-	  <author initials="E." surname="Kiltz" />
-	  <author initials="V." surname="Shoup" />
-	  <date year="2008" />
-	</front>
-	<annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
-	  Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
-	</annotation>
+        <front>
+          <title>The Twin-Diffie Hellman Problem and Applications</title>
+          <author initials="D." surname="Cash" />
+          <author initials="E." surname="Kiltz" />
+          <author initials="V." surname="Shoup" />
+          <date year="2008" />
+        </front>
+        <annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
+          Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
+        </annotation>
       </reference>
       &RFC5480;
     </references>
