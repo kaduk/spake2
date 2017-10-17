@@ -4,7 +4,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="informational" ipr="trust200902" docName="draft-irtf-cfrg-spake2-03" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-03" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" surname="Ladd">
@@ -100,11 +100,11 @@
 	  sufficient transcript hashing, let K' be
 	  H(len(A)||A||len(B)||B||len(X)||X||len(Y)||Y||len(Z)||Z||len(V)||V)
 	  and use K' as the established key.</t>
-      </section
+      </section>
     </section>
     <section title="Table of points for common groups">
       <t>Every curve presented in the table below has an OID from <xref
-	target="OID" />. We construct a string using the OID and the needed
+	target="RFC5480" />. We construct a string using the OID and the needed
 	constant, for instance "1.3.132.0.35 point generation seed (M)" for
 	P-512.  This string is turned into an infinite sequence of bytes by
 	hashing with SHA256, and hashing that output again to generate the next
@@ -122,21 +122,21 @@
 	h, and if that is not the identity, output it.</t>
 
       <t>These bytestrings are compressed points as in <xref target="SEC1" />
-	for curves from <xref target="SEC1" />.
+	for curves from <xref target="SEC1" />.</t>
 
       <t>For P256:</t>
 
-      <figure><artwork>
+      <figure><artwork><![CDATA[
 M =
 02886e2f97ace46e55ba9dd7242579f2993b64e16ef3dcab95afd497333d8fa12f
 
 N =
 03d8bbd6c639c62937b04d997f38c3770719c629d7014d49a24b4f98baa1292b49
-</artwork></figure>
+]]></artwork></figure>
 
       <t>For P384:</t>
 
-      <figure><artwork>
+      <figure><artwork><![CDATA[
 M =
 030ff0895ae5ebf6187080a82d82b42e2765e3b2f8749c7e05eba366434b363d3dc
 36f15314739074d2eb8613fceec2853
@@ -144,11 +144,11 @@ M =
 N =
 02c72cf2e390853a1c1c4ad816a62fd15824f56078918f43f922ca21518f9c543bb
 252c5490214cf9aa3f0baab4b665c10
-</artwork></figure>
+]]></artwork></figure>
 
       <t>For P521:</t>
 
-      <figure><artwork>
+      <figure><artwork><![CDATA[
 M =
 02003f06f38131b2ba2600791e82488e8d20ab889af753a41806c5db18d37d85608
 cfae06b82e4a72cd744c719193562a653ea1f119eef9356907edc9b56979962d7aa
@@ -156,11 +156,11 @@ cfae06b82e4a72cd744c719193562a653ea1f119eef9356907edc9b56979962d7aa
 N =
 0200c7924b9ec017f3094562894336a53c50167ba8c5963876880542bc669e494b25
 32d76c5b53dfb349fdf69154b9e0048c58a42e8ed04cef052a3bc349d95575cd25
-</artwork></figure>
+]]></artwork></figure>
 
       <t>The following python snippet generates the above points:</t>
 
-      <figure><artwork>
+      <figure><artwork><![CDATA[
 def canon_pointstr(self, s):        return chr(ord(s[0]) & 1 | 2) +
 s[1:]
 
@@ -176,7 +176,7 @@ return ''.join(hashes)[:sz]
 	try:              p = ec.decode_point(pointstr)             
 if ec.mul(p, order) == ec.identity():                  return
 pointstr, i          except Exception:              pass
-</artwork></figure>
+]]></artwork></figure>
     </section>
     <section title="Security Considerations">
       <t>A security proof of SPAKE2 for prime order groups is found in <xref
@@ -229,15 +229,15 @@ pointstr, i          except Exception:              pass
       <reference anchor="REF">
 	<front>
 	  <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
-	  <author initials="M." surname="Abdalla />
+	  <author initials="M." surname="Abdalla" />
 	  <author initials="D." surname="Pointcheval" />
 	  <date month="Feb" year="2005" />
 	</front>
-	<annotate><t>Appears in A. Menezes, editor. Topics in
+	<annotation>Appears in A. Menezes, editor. Topics in
 	  Cryptography-CT-RSA 2005, Volume 3376 of Lecture Notes in Computer
 	  Science, pages 191-208, San Francisco, CA, US.  Springer-Verlag,
-	  Berlin, Germany.</t>
-	</annotate>
+	  Berlin, Germany.
+	</annotation>
       </reference>
       <reference anchor="SEC1">
 	<front>
@@ -256,11 +256,11 @@ pointstr, i          except Exception:              pass
 	  <author initials="D." surname="Cash" />
 	  <author initials="E." surname="Kiltz" />
 	  <author initials="V." surname="Shoup" />
-	  <date year=2008" />
+	  <date year="2008" />
 	</front>
-	<annotate><t> EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
-	  Science, pages 127-145.  Springer-Verlag, Berlin, Germany.</t>
-	</annotate>
+	<annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
+	  Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
+	</annotation>
       </reference>
       &RFC5480;
     </references>
