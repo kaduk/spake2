@@ -39,7 +39,7 @@ second-factor protection without independent attacks on a single factor}
 \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{Kerberos Pre-Authentication}
 Why is SPAKE2 good for Kerberos?
 \begin{itemize}
@@ -47,6 +47,8 @@ Why is SPAKE2 good for Kerberos?
 \item{computes the shared key after just one message from each side}
 \item{small number of group operations}
 \end{itemize}
+
+Please review \url{draft-ietf-kitten-krb-spake-preauth}!
 \end{frame}
 
 \begin{frame}[fragile]
@@ -91,8 +93,9 @@ we preprend or overwrite with \verb+0x02+/\verb+0x03+}
 more explictily say so}
 \item{Nail down interaction between point format and picking group elements
 from the iterative hashing scheme for $M$ and $N$}
-\item{irtf-cfrg-curves support needs a point format that admits addition,
-for ed448goldilocks and ed25519}
+\item{irtf-cfrg-curves support (ed448goldilocks and ed25519?): when that
+comment was made, neither had a point format that admits addition; the
+kitten document includes $M$ and $N$ for ed25519}
 \end{itemize}
 \end{frame}
 
