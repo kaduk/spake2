@@ -1,0 +1,120 @@
+\documentclass{beamer}
+\usepackage{url}
+\usetheme{Berlin}
+\title{SPAKE2}
+\author{Benjamin Kaduk}
+\date{15 November 2017}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{Resuscitating draft-irtf-cfrg-spake2}
+
+\begin{frame}
+\frametitle{History}
+\begin{itemize}
+\item{Version -03 submitted in February 2016}
+\item{Got comments from Greg Hudson and Alex Elsayed}
+\item{No motion on the document afterwards}
+\item{Reconstructed -04 submitted last month}
+\item{New version coming soon!}
+\end{itemize}
+\end{frame}
+
+\section{Use Cases}
+
+\begin{frame}
+\frametitle{Kerberos Pre-Authentication}
+\begin{itemize}
+\item{``Traditional'' Kerberos has the KDC send a ticket to any client that asks.}
+\item{Users choose weak passwords}
+\item{Modern deployments ```pre-authenticate''' users before sending a ticket,
+but a passive observer still gets a ciphertext to brute-force}
+\item{Other options (FAST, PKINIT) are hard to deploy}
+\item{PAKE provides protection against offline attacks and also enables
+second-factor protection without independent attacks on a single factor}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Kerberos Pre-Authentication}
+Why is SPAKE2 good for Kerberos?
+\begin{itemize}
+\item{consistent with EC crypto}
+\item{computes the shared key after just one message from each side}
+\item{small number of group operations}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Other use cases}
+Authenticate file transfer via a password exchanged over the phone:
+
+\verb+https://github.com/warner/magic-wormhole+
+\end{frame}
+
+\section{Open Issues}
+
+\begin{frame}[fragile]
+\frametitle{Greg Hudson's Review}
+\url{https://www.ietf.org/mail-archive/web/cfrg/current/msg07928.html}
+
+\begin{itemize}
+\item{``SPAKE2+ doesn't use w0 or w1 in the derivation of $K'$'' --- closer to SPAKE1
+than SPAKE2?}
+\item{$M$ and $N$ generation is inconsistent between text and code:
+non-overlapping vs. overlapping output from the hashing chain}
+\item{cofactor check: prime order quotient vs. multiply-by-cofactor}
+\item{(formatting and editorial nits)}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Alex Elsayed's review}
+Points out that this PRF+-like scheme for arbitrary-length output via
+repeated hashing is a little silly. HKDF instead?
+
+As AGL notes, this is just for $M$ and $N$ generation, so it's not
+really important how elegant it is, just that it's reproducible.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Older issues}
+\begin{itemize}
+\item{Dan Harkins pointed out that we need to be precise about how many
+bytes we're taking as the ``initial sequence of bytes'' and whether
+we preprend or overwrite with \verb+0x02+/\verb+0x03+}
+\item{OIDs have both text and binary representations --- we use text, but should
+more explictily say so}
+\item{Nail down interaction between point format and picking group elements
+from the iterative hashing scheme for $M$ and $N$}
+\item{irtf-cfrg-curves support needs a point format that admits addition,
+for ed448goldilocks and ed25519}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Any general PAKE topics to consider?}
+\url{https://www.ietf.org/mail-archive/web/cfrg/current/msg08365.html}
+Stanislav notes that we might consider moving up a level of abstraction,
+to consider what use cases and requirements there can be for PAKE algorithms.
+
+How would SESPAKE/SPAKE/etc. compare --- how many PAKEs do we need?
+
+Do we need to consider the interaction of key confirmation and the
+surrounding protocol (e.g., final $K'$ derivation for SPAKE2), or just
+a raw primitive that could be used for TLS/IKE/etc.?
+\end{frame}
+
+\begin{frame}
+\frametitle{Open Questions}
+
+Any other concerns about the document?
+
+More review needed?
+\end{frame}
+
+\end{document}
