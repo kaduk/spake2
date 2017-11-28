@@ -98,7 +98,7 @@
           that both Z and V be used in combination with the transcript to
           derive the keying material. For higher-level protocols without
           sufficient transcript hashing, let K' be
-          H(len(A) || A || len(B) || B || len(X) || X || len(Y) || Y || len(Z) || Z || len(V) || V)
+          H(len(A) || A || len(B) || B || len(X) || X || len(Y) || Y || len(Z) || Z || len(V) || V || len(w0) || w0)
           and use K' as the established key.</t>
       </section>
     </section>
