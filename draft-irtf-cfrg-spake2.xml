@@ -85,7 +85,7 @@
       <section title="SPAKE2+">
         <t>This protocol and security proof appear in <xref target="TDH" />. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
-          and w1. The server, here Bob, stores L=w1*g and w0.</t>
+          and w1. B stores L=w1*g and w0.</t>
 
         <t>When executing SPAKE2+, A selects x uniformly at random from the
           numbers in the range [0, ph) divisible by h, and lets X=xG+w0*M, then
