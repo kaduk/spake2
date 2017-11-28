@@ -177,7 +177,7 @@ def bighash(seed, start, sz):
 
 def gen_point(seed, ec, order):
     for i in xrange(1, 1000):
-        pointstr = ec.canon_pointstr(bighash(seed, i, ec.nbytes_point()))
+        pointstr = canon_pointstr(bighash(seed, i, ec.nbytes_point()))
         try:
             p = ec.decode_point(pointstr)
             if ec.mul(p, order) == ec.identity():
