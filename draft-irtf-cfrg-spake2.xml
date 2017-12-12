@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY RFC5480 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5480.xml">
+<!ENTITY RFC7748 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7748.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -103,23 +104,28 @@
       </section>
     </section>
     <section title="Table of points for common groups">
-      <t>Every curve presented in the table below has an OID from <xref
-        target="RFC5480" />. We construct a string using the OID and the needed
-        constant, for instance "1.3.132.0.35 point generation seed (M)" for
-        P-512.  This string is turned into an infinite sequence of bytes by
-        hashing with SHA256, and hashing that output again to generate the next
-        32 bytes, and so on. This pattern is repeated for each group and value,
-        with the string modified appropriately.</t>
+      <t>For each curve in the table below, we construct a string
+      using the curve OID from <xref target="RFC5480" /> or its name,
+      combined with the needed constant, for instance "1.3.132.0.35
+      point generation seed (M)" for P-512.  This string is turned
+      into a series of blocks by hashing with SHA256, and hashing that
+      output again to generate the next 32 bytes, and so on.  This
+      pattern is repeated for each group and value, with the string
+      modified appropriately.</t>
 
-      <t>The initial segment of bytes of length equal to that of an encoded
-        group element is taken, and is then formatted as required for the
-        group.  In the case of Weierstrass points, this means setting the first
-        byte to 0x02 or 0x03 depending on the low-order bit. For Ed25519 style
-        formats this means taking all the bytes as the representation of the
-        group element.  This string of bytes is then interpreted as a point in
-        the group. If this is impossible, then the next non-overlapping segment
-        of sufficient length is taken. We multiply that point by the cofactor
-        h, and if that is not the identity, output it.</t>
+      <t>A byte string of length equal to that of an encoded group
+      element is constructed by concatenating as many blocks as are
+      required, starting from the first block, and truncating to the
+      desired length.  The byte string is then formatted as required
+      for the group.  In the case of Weierstrass curves, this means
+      setting the first byte to 0x02 or 0x03 depending on the
+      low-order bit.  For <xref target="RFC7748" /> curves this means
+      taking all the bytes as the representation of the group element.
+      The byte string is then interpreted as an element in the group.
+      If this interpretation yields a valid group element with the
+      correct order (p), the byte string is the output.  Otherwise,
+      the initial hash block is discarded and the process is repeated
+      until a valid element is found.</t>
 
       <t>These bytestrings are compressed points as in <xref target="SEC1" />
         for curves from <xref target="SEC1" />.</t>
@@ -129,9 +135,11 @@
       <figure><artwork><![CDATA[
 M =
 02886e2f97ace46e55ba9dd7242579f2993b64e16ef3dcab95afd497333d8fa12f
+seed: 1.2.840.10045.3.1.7 point generation seed (M)
 
 N =
 03d8bbd6c639c62937b04d997f38c3770719c629d7014d49a24b4f98baa1292b49
+seed: 1.2.840.10045.3.1.7 point generation seed (N)
 ]]></artwork></figure>
 
       <t>For P384:</t>
@@ -140,10 +148,12 @@ N =
 M =
 030ff0895ae5ebf6187080a82d82b42e2765e3b2f8749c7e05eba366434b363d3dc
 36f15314739074d2eb8613fceec2853
+seed: 1.3.132.0.34 point generation seed (M)
 
 N =
 02c72cf2e390853a1c1c4ad816a62fd15824f56078918f43f922ca21518f9c543bb
 252c5490214cf9aa3f0baab4b665c10
+seed: 1.3.132.0.34 point generation seed (N)
 ]]></artwork></figure>
 
       <t>For P521:</t>
@@ -152,16 +162,29 @@ N =
 M =
 02003f06f38131b2ba2600791e82488e8d20ab889af753a41806c5db18d37d85608
 cfae06b82e4a72cd744c719193562a653ea1f119eef9356907edc9b56979962d7aa
+seed: 1.3.132.0.35 point generation seed (M)
 
 N =
 0200c7924b9ec017f3094562894336a53c50167ba8c5963876880542bc669e494b25
 32d76c5b53dfb349fdf69154b9e0048c58a42e8ed04cef052a3bc349d95575cd25
+seed: 1.3.132.0.35 point generation seed (N)
+]]></artwork></figure>
+
+      <t>For edwards25519:</t>
+      <figure><artwork><![CDATA[
+M =
+d048032c6ea0b6d697ddc2e86bda85a33adac920f1bf18e1b0c6d166a5cecdaf
+seed: edwards25519 point generation seed (M)
+
+N =
+d3bfb518f44f3430f29d0c92af503865a1ed3281dc69b35dd868ba85f886c4ab
+seed: edwards25519 point generation seed (N)
 ]]></artwork></figure>
 
       <t>The following python snippet generates the above points:</t>
 
       <figure><artwork><![CDATA[
-def canon_pointstr(self, s):
+def canon_pointstr(s):
     return chr(ord(s[0]) & 1 | 2) + s[1:]
 
 def iterated_hash(seed, n):
@@ -175,12 +198,14 @@ def bighash(seed, start, sz):
     hashes = [iterated_hash(seed, i) for i in xrange(start, start + n)]
     return ''.join(hashes)[:sz]
 
-def gen_point(seed, ec, order):
+def gen_point(seed, ec, order, need_canonicalization):
     for i in xrange(1, 1000):
-        pointstr = canon_pointstr(bighash(seed, i, ec.nbytes_point()))
+        pointstr = bighash(seed, i, ec.nbytes_point())
+        if need_canonicalization:
+            pointstr = canon_pointstr(pointstr)
         try:
             p = ec.decode_point(pointstr)
-            if ec.mul(p, order) == ec.identity():
+            if p != ec.identity() and ec.mul(p, order) == ec.identity():
                 return pointstr, i
         except Exception:
             pass
@@ -271,6 +296,7 @@ def gen_point(seed, ec, order):
         </annotation>
       </reference>
       &RFC5480;
+      &RFC7748;
     </references>
   </back>
 </rfc>
