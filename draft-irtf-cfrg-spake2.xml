@@ -105,7 +105,8 @@
     </section>
     <section title="Table of points for common groups">
       <t>For each curve in the table below, we construct a string
-      using the curve OID from <xref target="RFC5480" /> or its name,
+      using the curve OID from <xref target="RFC5480" /> (as an ASCII
+      string) or its name,
       combined with the needed constant, for instance "1.3.132.0.35
       point generation seed (M)" for P-512.  This string is turned
       into a series of blocks by hashing with SHA256, and hashing that
