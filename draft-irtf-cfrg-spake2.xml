@@ -260,9 +260,10 @@ def gen_point(seed, ec, order, need_canonicalization):
       <t>No IANA action is required.</t>
     </section>
     <section title="Acknowledgments">
-      <t>Special thanks to Nathaniel McCallum for generation of test vectors.
+      <t>Special thanks to Nathaniel McCallum and Greg Hudson
+        for generation of test vectors.
         Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
-        Hudson suggested addition of warnings on the reuse of x and y. Thanks
+        Hudson also suggested the addition of warnings on the reuse of x and y. Thanks
         to Fedor Brunner, Adam Langley, and the members of the CFRG for
         comments and advice. Trevor Perrin informed me of SPAKE2+.</t>
     </section>
