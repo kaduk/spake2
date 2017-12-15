@@ -117,14 +117,24 @@
       element is constructed by concatenating as many blocks as are
       required, starting from the first block, and truncating to the
       desired length.  The byte string is then formatted as required
-      for the group.  In the case of Weierstrass curves, this means
-      setting the first byte to 0x02 or 0x03 depending on the
-      low-order bit.  For <xref target="RFC7748" /> curves this means
+      for the group.  In the case of Weierstrass curves, we take the
+      desired length as the length for representing a compressed point
+      (section 2.3.4 of <xref target="SEC1" />),
+      and use the low-order bit of the first byte as the sign bit.
+      In order to obtain the correct format, the value of the first
+      byte is set to 0x02 or 0x03 (clearing the first six bits
+      and setting the seventh bit), leaving the sign bit as it was
+      in the byte string constructed by concatenating hash blocks.
+      For the <xref target="RFC7748" /> curves this means
       taking all the bytes as the representation of the group element.
       The byte string is then interpreted as an element in the group.
       If this interpretation yields a valid group element with the
       correct order (p), the byte string is the output.  Otherwise,
-      the initial hash block is discarded and the process is repeated
+      the initial hash block is discarded and a new byte string constructed
+      from the remaining hash blocks. The procedure of constructing a
+      byte string of the appropriate length, formatting it as
+      required for the curve, and checking if it is a valid point of the correct
+      order, is repeated
       until a valid element is found.</t>
 
       <t>These bytestrings are compressed points as in <xref target="SEC1" />
