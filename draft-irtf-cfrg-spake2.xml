@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY RFC5480 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5480.xml">
-<!ENTITY RFC7748 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7748.xml">
+<!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -126,11 +126,14 @@
       byte is set to 0x02 or 0x03 (clearing the first six bits
       and setting the seventh bit), leaving the sign bit as it was
       in the byte string constructed by concatenating hash blocks.
-      For the <xref target="RFC7748" /> curves this means
-      taking all the bytes as the representation of the group element.
-      The byte string is then interpreted as an element in the group.
+      For the <xref target="RFC8032" /> curves a different procedure is used.
+      For edwards448 the 57-byte input has the least-significant 7 bits of the
+      last byte set to zero, and for edwards25519 the 32-byte input is
+      not modified.  For both the <xref target="RFC8032" /> curves the
+      (modified) input is then interpreted
+      as the representation of the group element.
       If this interpretation yields a valid group element with the
-      correct order (p), the byte string is the output.  Otherwise,
+      correct order (p), the (modified) byte string is the output.  Otherwise,
       the initial hash block is discarded and a new byte string constructed
       from the remaining hash blocks. The procedure of constructing a
       byte string of the appropriate length, formatting it as
@@ -308,7 +311,7 @@ def gen_point(seed, ec, order, need_canonicalization):
         </annotation>
       </reference>
       &RFC5480;
-      &RFC7748;
+      &RFC8032;
     </references>
   </back>
 </rfc>
