@@ -195,31 +195,52 @@ d3bfb518f44f3430f29d0c92af503865a1ed3281dc69b35dd868ba85f886c4ab
 seed: edwards25519 point generation seed (N)
 ]]></artwork></figure>
 
-      <t>The following python snippet generates the above points:</t>
+      <t>For edwards448:</t>
+      <figure><artwork><![CDATA[
+M =
+b6221038a775ecd007a4e4dde39fd76ae91d3cf0cc92be8f0c2fa6d6b66f9a12
+942f5a92646109152292464f3e63d354701c7848d9fc3b8880
+seed: edwards448 point generation seed (M)
+
+N =
+6034c65b66e4cd7a49b0edec3e3c9ccc4588afd8cf324e29f0a84a072531c4db
+f97ff9af195ed714a689251f08f8e06e2d1f24a0ffc0146600
+seed: edwards448 point generation seed (N)
+]]></artwork></figure>
+
+      <t>The following python snippet generates the above points,
+      assuming an elliptic curve implementation following the
+      interface of Edwards25519Point.stdbase() and
+      Edwards448Point.stdbase() in <xref target="RFC8032" /> appendix
+      A:</t>
 
       <figure><artwork><![CDATA[
-def canon_pointstr(s):
-    return chr(ord(s[0]) & 1 | 2) + s[1:]
-
 def iterated_hash(seed, n):
     h = seed
-    for i in xrange(n):
-        h = SHA256.new(h).digest()
+    for i in range(n):
+        h = hashlib.sha256(h).digest()
     return h
 
 def bighash(seed, start, sz):
     n = -(-sz // 32)
-    hashes = [iterated_hash(seed, i) for i in xrange(start, start + n)]
-    return ''.join(hashes)[:sz]
+    hashes = [iterated_hash(seed, i) for i in range(start, start + n)]
+    return b''.join(hashes)[:sz]
 
-def gen_point(seed, ec, order, need_canonicalization):
-    for i in xrange(1, 1000):
-        pointstr = bighash(seed, i, ec.nbytes_point())
-        if need_canonicalization:
-            pointstr = canon_pointstr(pointstr)
+def canon_pointstr(ecname, s):
+    if ecname == 'edwards25519':
+        return s
+    elif ecname == 'edwards448':
+        return s[:-1] + bytes([s[-1] & 0x80])
+    else:
+        return bytes([s[0] & 1 | 2]) + s[1:]
+
+def gen_point(seed, ecname, ec):
+    for i in range(1, 1000):
+        hval = bighash(seed, i, len(ec.encode()))
+        pointstr = canon_pointstr(ecname, hval)
         try:
-            p = ec.decode_point(pointstr)
-            if p != ec.identity() and ec.mul(p, order) == ec.identity():
+            p = ec.decode(pointstr)
+            if p != ec.zero_elem() and p * p.l() == ec.zero_elem():
                 return pointstr, i
         except Exception:
             pass
