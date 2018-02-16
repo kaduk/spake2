@@ -323,7 +323,25 @@ def gen_point(seed, ecname, ec):
     </section>
   </middle>
   <back>
-    <references title="References">
+    <references title="Normative References">
+      <reference anchor="SEC1">
+        <front>
+          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
+            Cryptography", version 2.0</title>
+          <author>
+            <organization>SEC</organization>
+          </author>
+          <date month="May" year="2009" />
+        </front>
+        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
+      </reference>
+      &RFC2119;
+      &RFC5480;
+      &RFC6234;
+      &RFC8032;
+      &RFC8174;
+    </references>
+    <references title="Informative References">
       <reference anchor="REF">
         <front>
           <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
@@ -337,17 +355,6 @@ def gen_point(seed, ecname, ec):
           Berlin, Germany.
         </annotation>
       </reference>
-      <reference anchor="SEC1">
-        <front>
-          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
-            Cryptography", version 2.0</title>
-          <author>
-            <organization>SEC</organization>
-          </author>
-          <date month="May" year="2009" />
-        </front>
-        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
-      </reference>
       <reference anchor="TDH">
         <front>
           <title>The Twin-Diffie Hellman Problem and Applications</title>
@@ -360,12 +367,7 @@ def gen_point(seed, ecname, ec):
           Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
         </annotation>
       </reference>
-      &RFC2119;
-      &RFC5480;
-      &RFC8032;
       &RFC8265;
-      &RFC6234;
-      &RFC8174;
     </references>
   </back>
 </rfc>
