@@ -40,7 +40,7 @@
         (requiring only a scheme to map a random input of fixed length per group
         to a random group element), is
         computationally efficient, and has a strong security proof.
-        Predetermined paremeters for a selection of commonly used groups are
+        Predetermined parameters for a selection of commonly used groups are
         also provided for use by other protocols.</t>
     </section>
     <section anchor="notation" title="Requirements Notation">
@@ -54,7 +54,7 @@
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup">
         <t>Let G be a group in which the Diffie-Hellman (DH) problem is hard of
-          order ph, with p a big prime and h a cofactor. We denote the
+          order p*h, with p a big prime and h a cofactor. We denote the
           operations in the group additively. Let H be a hash function from
           arbitrary strings to bit strings of a fixed length. Common choices
           for H are SHA256 or SHA512 <xref target="RFC6234" />.
@@ -89,14 +89,14 @@
       </section>
       <section title="SPAKE2">
         <t>A picks x randomly and uniformly from the integers in [0,ph)
-          divisible by h, and calculates X=xG and T=wM+X, then transmits T to
+          divisible by h, and calculates X=x*G and T=w*M+X, then transmits T to
           B.</t>
 
-        <t>B selects y randomly and uniformly from the integers in [0,ph),
-          divisible by h and calculates Y=yG, S=wN+Y, then transmits S to A.</t>
+        <t>B selects y randomly and uniformly from the integers in [0,p*h),
+          divisible by h and calculates Y=y*G, S=w*N+Y, then transmits S to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it as
-          x(S-wN), while B calculates it as y(T-wM). A knows S because it has
+          x(S-wN), while B calculates it as y(T-w*M). A knows S because it has
           received it, and likewise B knows T.</t>
 
         <t>This K is a shared value, but the scheme as described is not secure.
@@ -115,13 +115,13 @@
           and w1. B stores L=w1*g and w0.</t>
 
         <t>When executing SPAKE2+, A selects x uniformly at random from the
-          numbers in the range [0, ph) divisible by h, and lets X=xG+w0*M, then
+          numbers in the range [0, p*h) divisible by h, and lets X=x*G+w0*M, then
           transmits X to B. B selects y uniformly at random from the numbers in
-          [0, ph) divisible by h, then computes Y=yG+w0*N, and transmits it to
+          [0, p*h) divisible by h, then computes Y=y*G+w0*N, and transmits it to
           Alice.</t>
 
         <t>A computes Z as x(Y-w0*N), and V as w1(Y-w0*N). B computes Z as y(X-
-          w0*M) and V as yL. Both share Z and V as common keys. It is essential
+          w0*M) and V as y*L. Both share Z and V as common keys. It is essential
           that both Z and V be used in combination with the transcript to
           derive the keying material. For higher-level protocols without
           sufficient transcript hashing, let K' be
@@ -295,7 +295,7 @@ def gen_point(seed, ecname, ec):
         in a small-order subgroup.</t>
 
       <t>The choices of random numbers MUST BE uniform. Note that to pick a
-        random multiple of h in [0, p * h) one can pick a random integer in [0, p)
+        random multiple of h in [0, p*h) one can pick a random integer in [0, p)
         and multiply by h. Ephemeral values MUST NOT be reused; such reuse
         permits dictionary attacks on the password.</t>
 
