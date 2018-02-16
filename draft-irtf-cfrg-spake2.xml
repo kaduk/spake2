@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 <!ENTITY RFC5480 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5480.xml">
+<!ENTITY RFC6234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6234.xml">
 <!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
+<!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -22,26 +24,34 @@
     </author>
     <date month="October" year="2017"/>
     <abstract>
-      <t>This Internet-Draft describes SPAKE2, a secure, efficient password
-        based key exchange protocol.</t>
+      <t>This document describes SPAKE2, a means for two parties that share a password
+        to derive a strong shared key with no risk of disclosing the password.
+        This method is compatible with any group, is
+        computationally efficient, and has a strong security proof.</t>
     </abstract>
   </front>
   <middle>
     <section anchor="intro" title="Introduction">
-      <t>This document describes a means for two parties that share a password
-        to derive a shared key. This method is compatible with any group, is
-        computationally efficient, and has a strong security proof.</t>
+      <t>This document describes SPAKE2, a means for two parties that share a password
+        to derive a strong shared key with no risk of disclosing the password.
+        This password-based key exchange protocol is compatible with any group
+        (requiring only a scheme to map a random input of fixed length per group
+        to a random group element), is
+        computationally efficient, and has a strong security proof.
+        Predetermined paremeters for a selection of commonly used groups are
+        also provided for use by other protocols.</t>
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup">
-        <t>Let G be a group in which the Diffie-Hellman problem is hard of
+        <t>Let G be a group in which the Diffie-Hellman (DH) problem is hard of
           order ph, with p a big prime and h a cofactor. We denote the
           operations in the group additively. Let H be a hash function from
           arbitrary strings to bit strings of a fixed length. Common choices
-          for H are SHA256 or SHA512. We assume there is a representation of
+          for H are SHA256 or SHA512 <xref target="RFC6234" />.
+          We assume there is a representation of
           elements of G as byte strings: common choices would be SEC1
-          uncompressed <xref target="SEC1" /> for elliptic curve groups or big
-          endian integers of a particular length for prime field DH.</t>
+          compressed <xref target="SEC1" /> for elliptic curve groups or big
+          endian integers of a fixed (per-group) length for prime field DH.</t>
 
         <t>|| denotes concatenation of strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
@@ -49,20 +59,23 @@
 
         <t>We fix two elements M and N as defined in the table in this document
           for common groups, as well as a generator G of the group. G is
-          specified in the document defining the group, and so we do not recall
+          specified in the document defining the group, and so we do not repeat
           it here.</t>
 
-        <t>Let A and B be two parties. We will assume that A and B are also
-          representations of the parties such as MAC addresses or other names
-          (hostnames, usernames, etc). We assume they share an integer w.
-          Typically w will be the hash of a user-supplied password, truncated
-          and taken mod p. Protocols using this protocol must define the method
-          used to compute w: it may be necessary to carry out normalization.
-          The hashing algorithm SHOULD be designed to slow down brute force
+        <t>Let A and B be two parties. We will assume that A and B also have digital
+          representations of the parties' identities such as MAC addresses or other names
+          (hostnames, usernames, etc). We assume they share an integer w;
+          typically w will be the hash of a user-supplied password, truncated
+          and taken mod p. Protocols using this specification must define the method
+          used to compute w: it may be necessary to carry out various
+          forms of normalization of the password before hashing.
+          <xref target="RFC8265" />
+          The hashing algorithm SHOULD be designed to slow down brute-force
           attackers.</t>
 
         <t>We present two protocols below. Note that it is insecure to use the
-          same password with both protocols, this MUST NOT be done.</t>
+          same password with both protocols; passwords MUST NOT be used for
+          both SPAKE2 and SPAKE2+.</t>
       </section>
       <section title="SPAKE2">
         <t>A picks x randomly and uniformly from the integers in [0,ph)
@@ -76,11 +89,14 @@
           x(S-wN), while B calculates it as y(T-wM). A knows S because it has
           received it, and likewise B knows T.</t>
 
-        <t>This K is a shared secret, but the scheme as described is not secure.
+        <t>This K is a shared value, but the scheme as described is not secure.
           K  MUST be combined with the values transmitted and received via a
-          hash function to have a secure protocol. If higher-level protocols
-          prescribe a method for doing so, that SHOULD be used. Otherwise we
-          can compute K' as H(len(A) || A || len(B) || B || len(S) || S ||
+          hash function to prevent man-in-the-middle attackers from being able
+          to insert themselves into the exchange. Higher-level protocols
+          SHOULD prescribe a method for incorporating a "transcript" of the exchanged
+          values and endpoint identity information into the shared secret. One
+          such approach would be to
+          compute a K' as H(len(A) || A || len(B) || B || len(S) || S ||
           len(T) || T || len(K) || K || len(w) || w) and use K' as the key.</t>
       </section>
       <section title="SPAKE2+">
@@ -253,33 +269,36 @@ def gen_point(seed, ecname, ec):
         designed to eliminate concerns related to knowing discrete logs of M
         and N.</t>
 
-      <t>SPAKE2+ appears in <xref target="TDH" />, along with proof.</t>
+      <t>SPAKE2+ appears in <xref target="TDH" />, along with a security proof.</t>
 
-      <t>There is no key-confirmation as this is a one round protocol. It is
-        expected that a protocol using this key exchange mechanism provides key
+      <t>There is no key-confirmation as this is a one-round protocol. It is
+        expected that a protocol using this key exchange mechanism will provide key
         confirmation separately if desired.</t>
 
-      <t>Elements should be checked for group membership: failure to properly
+      <t>Elements received from a peer MUST be checked for group membership:
+        failure to properly
         validate group elements can lead to attacks. In particular it is
         essential to verify that received points are valid compressions of
         points on an elliptic curve when using elliptic curves. It is not
         necessary to validate membership in the prime order subgroup: the
-        multiplication by cofactors eliminates this issue.</t>
+        multiplication by cofactors eliminates the potential for mebership
+        in a small-order subgroup.</t>
 
       <t>The choices of random numbers MUST BE uniform. Note that to pick a
-        random multiple of h in [0, ph) one can pick a random integer in [0,p)
-        and multiply by h. Reuse of ephemerals results in dictionary attacks
-        and MUST NOT be done.</t>
+        random multiple of h in [0, p * h) one can pick a random integer in [0, p)
+        and multiply by h. Ephemeral values MUST NOT be reused; such reuse
+        permits dictionary attacks on the password.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server has to
         store a password equivalent. This is considered a significant drawback,
         and so SPAKE2+ also appears in this document.</t>
 
-      <t>As specified the shared secret K is not suitable for use as a shared
+      <t>As specified, the shared secret K is not suitable for direct use as a shared
         key.  It MUST be passed to a hash function along with the public values
-        used to derive it and the party identities to avoid attacks.  In
+        used to derive it and the identities of the participating parties
+        in order to avoid attacks.  In
         protocols which do not perform this separately, the value denoted K'
-        MUST be used instead.</t>
+        MUST be used instead of K.</t>
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
@@ -333,6 +352,8 @@ def gen_point(seed, ecname, ec):
       </reference>
       &RFC5480;
       &RFC8032;
+      &RFC8265;
+      &RFC6234;
     </references>
   </back>
 </rfc>
