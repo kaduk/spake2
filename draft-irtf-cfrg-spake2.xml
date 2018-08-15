@@ -279,7 +279,8 @@ def gen_point(seed, ecname, ec):
         designed to eliminate concerns related to knowing discrete logs of M
         and N.</t>
 
-      <t>SPAKE2+ appears in <xref target="TDH" />, along with a security proof.</t>
+      <t>SPAKE2+ appears in <xref target="TDH" />, along with a security proof
+        (though the corresponding model excludes precomputation attacks).</t>
 
       <t>There is no key-confirmation as this is a one-round protocol. It is
         expected that a protocol using this key exchange mechanism will provide key
