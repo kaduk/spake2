@@ -9,7 +9,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-06" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-07" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -24,7 +24,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="August" year="2018"/>
+    <date month="November" year="2018"/>
     <abstract>
       <t>This document describes SPAKE2, a means for two parties that share a password
         to derive a strong shared key with no risk of disclosing the password.
