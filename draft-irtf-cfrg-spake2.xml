@@ -29,7 +29,7 @@
       <t>This document describes SPAKE2, a means for two parties that share a password
         to derive a strong shared key with no risk of disclosing the password.
         This method is compatible with any group, is
-        computationally efficient, and has a strong security proof.</t>
+        computationally efficient, and has a security proof.</t>
     </abstract>
   </front>
   <middle>
@@ -39,7 +39,7 @@
         This password-based key exchange protocol is compatible with any group
         (requiring only a scheme to map a random input of fixed length per group
         to a random group element), is
-        computationally efficient, and has a strong security proof.
+        computationally efficient, and has a security proof.
         Predetermined parameters for a selection of commonly used groups are
         also provided for use by other protocols.</t>
     </section>
@@ -110,7 +110,7 @@
           len(T) || T || len(K) || K || len(w) || w) and use K' as the key.</t>
       </section>
       <section title="SPAKE2+">
-        <t>This protocol and security proof appear in <xref target="TDH" />. We
+        <t>This protocol appears in <xref target="TDH" />. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
           and w1. B stores L=w1*g and w0.</t>
 
@@ -279,7 +279,8 @@ def gen_point(seed, ecname, ec):
         designed to eliminate concerns related to knowing discrete logs of M
         and N.</t>
 
-      <t>SPAKE2+ appears in <xref target="TDH" />, along with a security proof
+      <t>SPAKE2+ appears in <xref target="TDH" /> along with a path to a proof that
+        server compromise does not lead to password compromise under the DH assumption
         (though the corresponding model excludes precomputation attacks).</t>
 
       <t>There is no key-confirmation as this is a one-round protocol. It is
