@@ -112,7 +112,8 @@
       <section title="SPAKE2+">
         <t>This protocol appears in <xref target="TDH" />. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
-          and w1. B stores L=w1*g and w0.</t>
+          and w1, derived by hashing the password with the identities of the two
+          participants. B stores L=w1*g and w0.</t>
 
         <t>When executing SPAKE2+, A selects x uniformly at random from the
           numbers in the range [0, p*h) divisible by h, and lets X=x*G+w0*M, then
