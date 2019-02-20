@@ -57,9 +57,6 @@
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup">
-
-        // TODO: replace p with q 
-
         <t>Let G be a group in which the computational Diffie-Hellman (CDH)
           problem is hard. Suppose G has order p*h where p is a large prime;
           h will be called the cofactor. Let I be the unit element in
