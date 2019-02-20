@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY RFC2104 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml">
 <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC4493 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4493.xml">
 <!ENTITY RFC5480 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5480.xml">
+<!ENTITY RFC5869 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5869.xml">
 <!ENTITY RFC6234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6234.xml">
+<!ENTITY RFC7748 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7748.xml">
 <!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
 <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
@@ -53,123 +57,237 @@
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup">
-        <t>Let G be a group in which the Diffie-Hellman (DH) problem is hard of
-          order p*h, with p a big prime and h a cofactor. We denote the
-          operations in the group additively. Let H be a hash function from
-          arbitrary strings to bit strings of a fixed length. Common choices
-          for H are SHA256 or SHA512 <xref target="RFC6234" />.
-          We assume there is a representation of
+        <t>Let G be a group in which the computational Diffie-Hellman (CDH)
+          problem is hard. Suppose G has order p*h where p is a large prime;
+          h will be called the cofactor. We denote the
+          operations in the group additively. We assume there is a representation of
           elements of G as byte strings: common choices would be SEC1
           compressed <xref target="SEC1" /> for elliptic curve groups or big
           endian integers of a fixed (per-group) length for prime field DH.</t>
 
         <t>|| denotes concatenation of strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
-          endian number.</t>
+          endian number. Finally, let nil represent an empty string, i.e.,
+          len(nil) = 0.</t>
+
+        <t>KDF is a key-derivation function that takes as input a salt, intermediate
+          keying material (IKM), info string, and derived key length L to derive a
+          cryptographic key of length L. MAC is a Message
+          Authentication Code algorithm that takes a secret key and
+          message as input to produce an output. Let Hash be a hash function from
+          arbitrary strings to bit strings of a fixed length. Common choices
+          for H are SHA256 or SHA512 <xref target="RFC6234"/>. MHF is a memory-hard
+          hash function designed to slow down brute-force attackers. Scrypt <xref target="RFC7914"/>
+          is a common example of this function. The output length of MHF matches that
+          of Hash. Parameter selection for MHF is out of scope for this document.
+          <xref target="Ciphersuites"/> specifies variants of KDF, MAC, Hash, and MHF
+          suitable for use with the protocols contained herein.</t>
 
         <t>We fix two elements M and N as defined in the table in this document
-          for common groups, as well as a generator G of the group. G is
+          for common groups, as well as a generator P of the group. P is
           specified in the document defining the group, and so we do not repeat
           it here.</t>
 
-        <t>Let A and B be two parties. We will assume that A and B also have digital
-          representations of the parties' identities such as MAC addresses or other names
-          (hostnames, usernames, etc). We assume they share an integer w;
-          typically w will be the hash of a user-supplied password, truncated
-          and taken mod p. Protocols using this specification must define the method
-          used to compute w: it may be necessary to carry out various
-          forms of normalization of the password before hashing.
-          <xref target="RFC8265" />
-          The hashing algorithm SHOULD be designed to slow down brute-force
-          attackers.</t>
+        <t>Let A and B be two parties. A and B may also have digital
+          representations of the parties' identities such as Media Access Control addresses
+          or other names (hostnames, usernames, etc). A and B may share Additional
+          Authenticated Data (AAD) of length at most 2^16 - 1 bits that is separate
+          from their identities which they may want to include in the protocol execution.
+          We assume they share an integer w;
+          typically w = MHF(pw) mod p, for a user-supplied password pw.
+          Standards such NIST.SP.800-56Ar3 suggest taking mod p of a
+          hash value that is 64 bits longer than that needed to represent p to remove
+          statistical bias introduced by the modulation. Protocols using this specification must define
+          the method used to compute w: it may be necessary to carry out various
+          forms of normalization of the password before hashing <xref target="RFC8265" />.
+          The hashing algorithm SHOULD be a MHF so as to slow down brute-force
+          attackers. </t>
 
         <t>We present two protocols below. Note that it is insecure to use the
           same password with both protocols; passwords MUST NOT be used for
           both SPAKE2 and SPAKE2+.</t>
       </section>
-      <section title="SPAKE2">
-        <t>A picks x randomly and uniformly from the integers in [0,ph)
-          divisible by h, and calculates X=x*G and T=w*M+X, then transmits T to
-          B.</t>
+      <section title="SPAKE2" anchor="spake2">
+        <t>To begin, A picks x randomly and uniformly from the integers in [0,p*h)
+            divisible by h, and calculates X=x*P and T=w*M+X, then transmits T to
+            B.</t>
 
         <t>B selects y randomly and uniformly from the integers in [0,p*h),
-          divisible by h and calculates Y=y*G, S=w*N+Y, then transmits S to A.</t>
+          divisible by h and calculates Y=y*P, S=w*N+Y, then transmits S to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it as
-          x(S-wN), while B calculates it as y(T-w*M). A knows S because it has
-          received it, and likewise B knows T.</t>
+          h*x(S-wN), while B calculates it as h*y(T-w*M). A knows S because it has
+          received it, and likewise B knows T. A and B multiply protocol messages from
+          each peer by h so as to avoid small subgroup attacks.</t>
 
-        <t>This K is a shared value, but the scheme as described is not secure.
-          K  MUST be combined with the values transmitted and received via a
-          hash function to prevent man-in-the-middle attackers from being able
-          to insert themselves into the exchange. Higher-level protocols
-          SHOULD prescribe a method for incorporating a "transcript" of the exchanged
-          values and endpoint identity information into the shared secret. One
-          such approach would be to
-          compute a K' as H(len(A) || A || len(B) || B || len(S) || S ||
-          len(T) || T || len(K) || K || len(w) || w) and use K' as the key.</t>
+        <t>K is a shared value, though it MUST NOT be used as a shared secret.
+          Both A and B must derive two shared secrets from K and the protocol transcript.
+          This prevents man-in-the-middle attackers from inserting themselves into
+          the exchange. The transcript T is encoded as follows:</t>
+
+        <figure><artwork><![CDATA[
+            T = len(A) || A || len(B) || B || len(S) || S || len(T) || T
+             || len(K) || K || len(w) || w
+        ]]></artwork></figure>
+
+        <t>If an identity is absent, it is omitted from the transcript entirely. For example,
+          if both A and B are absent, then T = len(S) || S || len(T) || T || len(K) || K || len(w) || w.
+          Likewise, if only A is absent, T = len(B) || B || len(S) || S || len(T) || T || len(K) || K || len(w) || w.
+          This must only be done for applications in which identities are implicit. Otherwise,
+          the protocol risks Unknown Key Share attacks.</t>
+
+        <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
+            specified in <xref target="keys"/>. A MUST send B a key confirmation message
+            so both parties agree upon these shared secrets. This confirmation message F
+            is computed as a MAC over the protocol transcript T using KcA, as follows:
+            F = MAC(KcA, T). Similarly, B MUST send A a confirmation message using a MAC
+            computed equivalently except with the use of KcB. Key confirmation verification
+            requires computing F and checking for equality against that which was received.</t>
       </section>
-      <section title="SPAKE2+">
+
+      <section title="SPAKE2+" anchor="spake2plus">
         <t>This protocol appears in <xref target="TDH" />. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
-          and w1, derived by hashing the password with the identities of the two
-          participants. B stores L=w1*g and w0.</t>
+          and w1, derived by hashing the password pw with the identities of the two
+          participants, A and B. Specifically,
+          w0s || w1s = MHF(len(pw) || pw || len(A) || A || len(B) || B),
+          and then computing w0 = h*(w0s mod p) and w1 = h*(w1s mod p)
+          to ensure both belong to the prime-order subgroup. B stores L=h*w1*P and w0.</t>
 
         <t>When executing SPAKE2+, A selects x uniformly at random from the
-          numbers in the range [0, p*h) divisible by h, and lets X=x*G+w0*M, then
+          numbers in the range [0, p*h) divisible by h, and lets X=x*P+w0*M, then
           transmits X to B. B selects y uniformly at random from the numbers in
-          [0, p*h) divisible by h, then computes Y=y*G+w0*N, and transmits it to
-          Alice.</t>
+          [0, p*h) divisible by h, then computes Y=y*P+w0*N, and transmits Y to A.</t>
 
-        <t>A computes Z as x(Y-w0*N), and V as w1(Y-w0*N). B computes Z as y(X-
+        <t>A computes Z as h*x*(Y-w0*N), and V as h*w1*(Y-w0*N). B computes Z as h*y*(X-
           w0*M) and V as y*L. Both share Z and V as common keys. It is essential
           that both Z and V be used in combination with the transcript to
-          derive the keying material. For higher-level protocols without
-          sufficient transcript hashing, let K' be
-          H(len(A) || A || len(B) || B || len(X) || X || len(Y) || Y || len(Z) || Z || len(V) || V || len(w0) || w0)
-          and use K' as the established key.</t>
+          derive the keying material. The protocol transcript encoding is shown below.</t>
+
+        <figure><artwork><![CDATA[
+            T = len(A) || A || len(B) || B || len(X) || X || len(Y) || Y
+             || len(Z) || Z || len(V) || V || len(w0) || w0
+        ]]></artwork></figure>
+
+        <t>As in <xref target="spake2"/>, inclusion of A and B in the transcript is optional depending
+        on whether or not the identities are implicit.</t>
+
+        <t>Upon completion of this protocol, A and B follow the same key derivation and confirmation
+            steps as outlined in <xref target="spake2"/>.</t>
       </section>
     </section>
-    <section title="Table of points for common groups">
-      <t>For each curve in the table below, we construct a string
-      using the curve OID from <xref target="RFC5480" /> (as an ASCII
-      string) or its name,
-      combined with the needed constant, for instance "1.3.132.0.35
-      point generation seed (M)" for P-512.  This string is turned
-      into a series of blocks by hashing with SHA256, and hashing that
-      output again to generate the next 32 bytes, and so on.  This
-      pattern is repeated for each group and value, with the string
-      modified appropriately.</t>
+    <section title="Key Schedule and Key Confirmation" anchor="keys">
+        <t>The protocol transcript T, as defined in Sections <xref target="spake2plus"/> and
+            <xref target="spake2"/>, is unique and secret to A and B. Both parties use T to
+            derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(T). The length of each
+            key is equal to half of the digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.</t>
 
-      <t>A byte string of length equal to that of an encoded group
-      element is constructed by concatenating as many blocks as are
-      required, starting from the first block, and truncating to the
-      desired length.  The byte string is then formatted as required
-      for the group.  In the case of Weierstrass curves, we take the
-      desired length as the length for representing a compressed point
-      (section 2.3.4 of <xref target="SEC1" />),
-      and use the low-order bit of the first byte as the sign bit.
-      In order to obtain the correct format, the value of the first
-      byte is set to 0x02 or 0x03 (clearing the first six bits
-      and setting the seventh bit), leaving the sign bit as it was
-      in the byte string constructed by concatenating hash blocks.
-      For the <xref target="RFC8032" /> curves a different procedure is used.
-      For edwards448 the 57-byte input has the least-significant 7 bits of the
-      last byte set to zero, and for edwards25519 the 32-byte input is
-      not modified.  For both the <xref target="RFC8032" /> curves the
-      (modified) input is then interpreted
-      as the representation of the group element.
-      If this interpretation yields a valid group element with the
-      correct order (p), the (modified) byte string is the output.  Otherwise,
-      the initial hash block is discarded and a new byte string constructed
-      from the remaining hash blocks. The procedure of constructing a
-      byte string of the appropriate length, formatting it as
-      required for the curve, and checking if it is a valid point of the correct
-      order, is repeated
-      until a valid element is found.</t>
+        <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
+            Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
+            A and B compute them as KcA || KcB = KDF(nil, Ka, "ConfirmationKeys" || AAD), where AAD
+            is the associated data each given to each endpoint, or nil if none was provided.</t>
 
-      <t>These bytestrings are compressed points as in <xref target="SEC1" />
-        for curves from <xref target="SEC1" />.</t>
+        <t>The resulting key schedule for this protocol, given transcript T and additional associated
+            data AAD, is as follows.</t>
+
+        <figure><artwork><![CDATA[
+        T   -> Hash(T) = Ke || Ka
+        AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
+        ]]></artwork></figure>
+
+        <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
+            used for anything except key confirmation.</t>
+    </section>
+    <section title="Ciphersuites" anchor="Ciphersuites">
+        <t>
+            This section documents SPAKE2 and SPAKE2+ ciphersuite configurations. A ciphersuite
+            indicates a group, cryptographic hash algorithm, and pair of KDF and MAC functions, e.g.,
+            SPAKE2-P256-SHA256-HKDF-HMAC. This ciphersuite indicates a SPAKE2 protocol instance over
+            P-256 that uses SHA256 along with HKDF <xref target="RFC5869"/> and HMAC <xref target="RFC2104"/>
+            for G, Hash, KDF, and MAC functions, respectively. Use of </t>
+
+            <texttable anchor="spake2_ciphersuites" title="SPAKE2(+) Ciphersuites">
+                <ttcol align='center'>G</ttcol>
+                <ttcol align='center'>Hash</ttcol>
+                <ttcol align='center'>KDF</ttcol>
+                <ttcol align='center'>MAC</ttcol>
+                <ttcol align='center'>MHF</ttcol>
+
+                <!-- P256-SHA256-HKDF-HMAC -->
+                <c>P-256</c>
+                <c>SHA256 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P256-SHA512-HKDF-HMAC -->
+                <c>P-256</c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P384-SHA256-HKDF-HMAC -->
+                <c>P-384</c>
+                <c>SHA256 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P384-SHA512-HKDF-HMAC -->
+                <c>P-384</c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P512-SHA256-HKDF-HMAC -->
+                <c>P-512</c>
+                <c>SHA256 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P512-SHA512-HKDF-HMAC -->
+                <c>P-512</c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- edwards25519-SHA512-HKDF-HMAC -->
+                <c>edwards25519 <xref target="RFC7748"/></c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- edwards448-SHA512-HKDF-HMAC -->
+                <c>edwards448 <xref target="RFC7748"/></c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>HMAC <xref target="RFC2104"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P256-SHA256-HKDF-CMAC -->
+                <c>P-256</c>
+                <c>SHA256 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>CMAC-AES-128 <xref target="RFC4493"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+
+                <!-- P256-SHA512-HKDF-CMAC -->
+                <c>P-256</c>
+                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>HKDF <xref target="RFC5869"/></c>
+                <c>CMAC-AES-128 <xref target="RFC4493"/></c>
+                <c>scrypt <xref target="RFC7914"/></c>
+            </texttable>
+
+        <t>The following points represent permissible point generation seeds
+            for the groups listed in the Table <xref target="spake2_ciphersuites"/>.
+            These bytestrings are compressed points as in <xref target="SEC1" />
+            for curves from <xref target="SEC1" />.</t>
 
       <t>For P256:</t>
 
@@ -238,8 +356,7 @@ seed: edwards448 point generation seed (N)
       <t>The following python snippet generates the above points,
       assuming an elliptic curve implementation following the
       interface of Edwards25519Point.stdbase() and
-      Edwards448Point.stdbase() in <xref target="RFC8032" /> appendix
-      A:</t>
+      Edwards448Point.stdbase() in <xref target="RFC8032"/> appendix A:</t>
 
       <figure><artwork><![CDATA[
 def iterated_hash(seed, n):
@@ -284,34 +401,23 @@ def gen_point(seed, ecname, ec):
         server compromise does not lead to password compromise under the DH assumption
         (though the corresponding model excludes precomputation attacks).</t>
 
-      <t>There is no key-confirmation as this is a one-round protocol. It is
-        expected that a protocol using this key exchange mechanism will provide key
-        confirmation separately if desired.</t>
-
       <t>Elements received from a peer MUST be checked for group membership:
-        failure to properly
-        validate group elements can lead to attacks. In particular it is
-        essential to verify that received points are valid compressions of
-        points on an elliptic curve when using elliptic curves. It is not
-        necessary to validate membership in the prime order subgroup: the
-        multiplication by cofactors eliminates the potential for mebership
-        in a small-order subgroup.</t>
+        failure to properly validate group elements can lead to attacks. In particular,
+        it is essential that endpoints verify received points are valid compressions of
+        points on an elliptic curve when using elliptic curves with point compression.
+        It is not necessary to validate membership in the prime order subgroup: the
+        implicit multiplication by cofactors when generating x and y eliminates
+        the potential for membership of X and Y in a small-order subgroup.</t>
 
       <t>The choices of random numbers MUST BE uniform. Note that to pick a
         random multiple of h in [0, p*h) one can pick a random integer in [0, p)
-        and multiply by h. Ephemeral values MUST NOT be reused; such reuse
-        permits dictionary attacks on the password.</t>
+        and multiply by h. Randomly generated values MUST NOT be reused; such reuse
+        may permit dictionary attacks on the password.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server has to
         store a password equivalent. This is considered a significant drawback,
         and so SPAKE2+ also appears in this document.</t>
 
-      <t>As specified, the shared secret K is not suitable for direct use as a shared
-        key.  It MUST be passed to a hash function along with the public values
-        used to derive it and the identities of the participating parties
-        in order to avoid attacks.  In
-        protocols which do not perform this separately, the value denoted K'
-        MUST be used instead of K.</t>
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
@@ -338,9 +444,13 @@ def gen_point(seed, ecname, ec):
         </front>
         <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
       </reference>
+      &RFC2104;
       &RFC2119;
+      &RFC4493;
       &RFC5480;
+      &RFC5869;
       &RFC6234;
+      &RFC7748;
       &RFC8032;
       &RFC8174;
     </references>
