@@ -33,7 +33,7 @@
       <t>This document describes SPAKE2 and its augmented variant SPAKE2+, which are protocols for
           two parties that share a password to derive a strong shared key with no risk of disclosing
           the password. This method is compatible with any prime order group, is computationally
-          efficient, and has a security proof.</t>
+          efficient, and SPAKE2 (but not SPAKE2+) has a security proof.</t>
     </abstract>
   </front>
   <middle>
@@ -128,24 +128,24 @@
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
           Both A and B must derive two shared secrets from K and the protocol transcript.
           This prevents man-in-the-middle attackers from inserting themselves into
-          the exchange. The transcript T is encoded as follows:</t>
+          the exchange. The transcript TT is encoded as follows:</t>
 
         <figure><artwork><![CDATA[
-            T = len(A) || A || len(B) || B || len(S) || S || len(T) || T
+            TT = len(A) || A || len(B) || B || len(S) || S || len(T) || T
              || len(K) || K || len(w) || w
         ]]></artwork></figure>
 
         <t>If an identity is absent, it is omitted from the transcript entirely. For example,
-          if both A and B are absent, then T = len(S) || S || len(T) || T || len(K) || K || len(w) || w.
-          Likewise, if only A is absent, T = len(B) || B || len(S) || S || len(T) || T || len(K) || K || len(w) || w.
+          if both A and B are absent, then TT = len(S) || S || len(T) || T || len(K) || K || len(w) || w.
+          Likewise, if only A is absent, TT = len(B) || B || len(S) || S || len(T) || T || len(K) || K || len(w) || w.
           This must only be done for applications in which identities are implicit. Otherwise,
           the protocol risks Unknown Key Share attacks.</t>
 
         <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
             specified in <xref target="keys"/>. A MUST send B a key confirmation message
             so both parties agree upon these shared secrets. This confirmation message F
-            is computed as a MAC over the protocol transcript T using KcA, as follows:
-            F = MAC(KcA, T). Similarly, B MUST send A a confirmation message using a MAC
+            is computed as a MAC over the protocol transcript TT using KcA, as follows:
+            F = MAC(KcA, TT). Similarly, B MUST send A a confirmation message using a MAC
             computed equivalently except with the use of KcB. Key confirmation verification
             requires computing F and checking for equality against that which was received.</t>
       </section>
@@ -176,7 +176,7 @@
           derive the keying material. The protocol transcript encoding is shown below.</t>
 
         <figure><artwork><![CDATA[
-            T = len(A) || A || len(B) || B || len(X) || X || len(Y) || Y
+            TT = len(A) || A || len(B) || B || len(X) || X || len(Y) || Y
              || len(Z) || Z || len(V) || V || len(w0) || w0
         ]]></artwork></figure>
 
@@ -188,9 +188,9 @@
       </section>
     </section>
     <section title="Key Schedule and Key Confirmation" anchor="keys">
-        <t>The protocol transcript T, as defined in Sections <xref target="spake2plus"/> and
-            <xref target="spake2"/>, is unique and secret to A and B. Both parties use T to
-            derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(T). The length of each
+        <t>The protocol transcript TT, as defined in Sections <xref target="spake2plus"/> and
+            <xref target="spake2"/>, is unique and secret to A and B. Both parties use TT to
+            derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT). The length of each
             key is equal to half of the digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.</t>
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
@@ -198,11 +198,11 @@
             A and B compute them as KcA || KcB = KDF(nil, Ka, "ConfirmationKeys" || AAD), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.</t>
 
-        <t>The resulting key schedule for this protocol, given transcript T and additional associated
+        <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
 
         <figure><artwork><![CDATA[
-        T   -> Hash(T) = Ke || Ka
+        TT   -> Hash(TT) = Ke || Ka
         AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
         ]]></artwork></figure>
 
