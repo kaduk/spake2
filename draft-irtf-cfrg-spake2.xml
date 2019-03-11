@@ -441,7 +441,9 @@ def gen_point(seed, ecname, ec):
         Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
         Hudson also suggested the addition of warnings on the reuse of x and y. Thanks
         to Fedor Brunner, Adam Langley, and the members of the CFRG for
-        comments and advice. Trevor Perrin informed me of SPAKE2+.</t>
+        comments and advice. Chris Wood contributed substantial text and reformatting
+        to address the excellent review comments from Kenny Paterson.
+        Trevor Perrin informed me of SPAKE2+.</t>
     </section>
   </middle>
   <back>
