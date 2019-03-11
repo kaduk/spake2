@@ -498,9 +498,6 @@ seed: edwards448 point generation seed (N)
       order, is repeated
       until a valid element is found.</t>
 
-      <t>These bytestrings are compressed points as in <xref target="SEC1" />
-        for curves from <xref target="SEC1" />.</t>
-
       <t>The following python snippet generates the above points,
       assuming an elliptic curve implementation following the
       interface of Edwards25519Point.stdbase() and
