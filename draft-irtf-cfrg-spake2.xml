@@ -125,7 +125,9 @@
         <t>Both A and B calculate a group element K. A calculates it as
           x*(S-wN), while B calculates it as y*(T-w*M). A knows S because it has
           received it, and likewise B knows T. A and B multiply protocol messages from
-          each peer by h so as to avoid small subgroup attacks.</t>
+          each peer by h so as to avoid small subgroup attacks, but the result of
+          the multiplication is not used for operations other than the comparison
+          against I and the non-multiplied value is used in subsequent calculations.</t>
 
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
           Both A and B must derive two shared secrets from K and the protocol transcript.
@@ -133,7 +135,7 @@
           the exchange. The transcript TT is encoded as follows:</t>
 
         <figure><artwork><![CDATA[
-            TT = len(A) || A || len(B) || B || len(S) || S || len(T) || T
+	TT = len(A) || A || len(B) || B || len(S) || S || len(T) || T
              || len(K) || K || len(w) || w
         ]]></artwork></figure>
 
