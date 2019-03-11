@@ -7,6 +7,7 @@
 <!ENTITY RFC5869 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5869.xml">
 <!ENTITY RFC6234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6234.xml">
 <!ENTITY RFC7748 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7748.xml">
+<!ENTITY RFC7914 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7914.xml">
 <!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
 <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
@@ -459,6 +460,7 @@ def gen_point(seed, ecname, ec):
       &RFC5869;
       &RFC6234;
       &RFC7748;
+      &RFC7914;
       &RFC8032;
       &RFC8174;
     </references>
