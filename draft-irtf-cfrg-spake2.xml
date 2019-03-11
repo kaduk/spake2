@@ -259,13 +259,6 @@
                 <c>HMAC <xref target="RFC2104"/></c>
                 <c>scrypt <xref target="RFC7914"/></c>
 
-                <!-- P512-SHA256-HKDF-HMAC -->
-                <c>P-512</c>
-                <c>SHA256 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-                <c>scrypt <xref target="RFC7914"/></c>
-
                 <!-- P512-SHA512-HKDF-HMAC -->
                 <c>P-512</c>
                 <c>SHA512 <xref target="RFC6234"/></c>
@@ -273,9 +266,9 @@
                 <c>HMAC <xref target="RFC2104"/></c>
                 <c>scrypt <xref target="RFC7914"/></c>
 
-                <!-- edwards25519-SHA512-HKDF-HMAC -->
+                <!-- edwards25519-SHA256-HKDF-HMAC -->
                 <c>edwards25519 <xref target="RFC7748"/></c>
-                <c>SHA512 <xref target="RFC6234"/></c>
+                <c>SHA256 <xref target="RFC6234"/></c>
                 <c>HKDF <xref target="RFC5869"/></c>
                 <c>HMAC <xref target="RFC2104"/></c>
                 <c>scrypt <xref target="RFC7914"/></c>
