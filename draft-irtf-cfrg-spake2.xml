@@ -384,7 +384,7 @@ seed: edwards448 point generation seed (N)
         multiplication checks to ensure that these elements are in the prime order subgroup
         of G, it is essential that endpoints verify received points are members of G.</t>
 
-      <t>The choices of random numbers MUST BE uniform. Randomly generated values
+      <t>The choices of random numbers MUST BE uniform. Randomly generated values (e.g., x and y)
           MUST NOT be reused; such reuse may permit dictionary attacks on the password.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server has to
@@ -503,8 +503,7 @@ seed: edwards448 point generation seed (N)
       <t>The following python snippet generates the above points,
       assuming an elliptic curve implementation following the
       interface of Edwards25519Point.stdbase() and
-      Edwards448Point.stdbase() in <xref target="RFC8032" /> appendix
-      A:</t>
+      Edwards448Point.stdbase() in Appendix A of <xref target="RFC8032" />:</t>
 
       <figure><artwork><![CDATA[
 def iterated_hash(seed, n):
