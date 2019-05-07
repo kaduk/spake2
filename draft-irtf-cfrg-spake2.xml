@@ -114,20 +114,17 @@
       </section>
       <section title="SPAKE2" anchor="spake2">
         <t>To begin, A picks x randomly and uniformly from the integers in [0,p),
-            and calculates X=x*P and T=w*M+X, then transmits T to B. Upon receipt
-            of T, B computes T*h and aborts if the result is equal to I. (This ensures
-            T is in the prime order subgroup of G.)</t>
+            and calculates X=x*P and T=w*M+X, then transmits T to B.</t>
 
         <t>B selects y randomly and uniformly from the integers in [0,p), and calculates
-            Y=y*P, S=w*N+Y, then transmits S to A. Upon receipt of S, A computes S*h and
-            aborts if the result is equal to I.</t>
+            Y=y*P, S=w*N+Y, then transmits S to A.</t>
 
-        <t>Both A and B calculate a group element K. A calculates it as
-          x*(S-wN), while B calculates it as y*(T-w*M). A knows S because it has
-          received it, and likewise B knows T. A and B multiply protocol messages from
-          each peer by h so as to avoid small subgroup attacks, but the result of
-          the multiplication is not used for operations other than the comparison
-          against I and the non-multiplied value is used in subsequent calculations.</t>
+        <t>Both A and B calculate a group element K. A calculates it
+        as h*x*(S-wN), while B calculates it as h*y*(T-w*M). A knows S
+        because it has received it, and likewise B knows T. The
+        multiplication by h prevents small subgroup confinement
+        attacks by computing a unique value in the quotient
+        group. (Any text on abstract algebra explains this notion)</t>
 
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
           Both A and B must derive two shared secrets from K and the protocol transcript.
@@ -174,11 +171,10 @@
           numbers in the range [0, p), and lets X=x*P+w0*M, then transmits X to
           B. Upon receipt of X, A computes h*X and aborts if the result is equal
           to I. B then selects y uniformly at random from the numbers in [0, p),
-          then computes Y=y*P+w0*N, and transmits Y to A. Upon receipt of Y, A computes
-          Y*h and aborts if the result is equal to I.</t>
+          then computes Y=y*P+w0*N, and transmits Y to A. .</t>
 
-        <t>A computes Z as x*(Y-w0*N), and V as w1*(Y-w0*N). B computes Z as y*(X-
-          w0*M) and V as y*L. Both share Z and V as common keys. It is essential
+        <t>A computes Z as h*x*(Y-w0*N), and V as h*w1*(Y-w0*N). B computes Z as h*y*(X-
+          w0*M) and V as h*y*L. Both share Z and V as common keys. It is essential
           that both Z and V be used in combination with the transcript to
           derive the keying material. The protocol transcript encoding is shown below.</t>
 
