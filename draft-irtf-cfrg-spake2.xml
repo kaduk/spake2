@@ -30,7 +30,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="March" year="2019"/>
+    <date month="October" year="2019"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
@@ -183,8 +183,7 @@
 
     </section>
     <section title="Key Schedule and Key Confirmation" anchor="keys">
-        <t>The protocol transcript TT, as defined in Sections <xref target="spake2plus"/> and
-            <xref target="spake2"/>, is unique and secret to A and B. Both parties use TT to
+        <t>The protocol transcript TT, as defined in Section <xref target="spake2"/>, is unique and secret to A and B. Both parties use TT to
             derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT). The length of each
             key is equal to half of the digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.</t>
 
