@@ -53,7 +53,7 @@
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
         NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
         "MAY", and "OPTIONAL" in this document are to be interpreted as
-        described in BCP 14 <xref target="RFC2119" /> <xref target="RFC8174" />
+        described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
         when, and only when, they
         appear in all capitals, as shown here.</t>
     </section>
@@ -65,7 +65,7 @@
           G, e.g., the point at infinity if G is an elliptic curve group. We denote the
           operations in the group additively. We assume there is a representation of
           elements of G as byte strings: common choices would be SEC1
-          uncompressed or compressed <xref target="SEC1" /> for elliptic curve groups or big
+          uncompressed or compressed <xref target="SEC1"/> for elliptic curve groups or big
           endian integers of a fixed (per-group) length for prime field DH.
           We fix two elements M and N in the prime-order subgroup of G as defined
           in the table in this document for common groups, as well as a generator P
@@ -104,7 +104,7 @@
           hash value that is 64 bits longer than that needed to represent p to remove
           statistical bias introduced by the modulation. Protocols using this specification must define
           the method used to compute w: it may be necessary to carry out various
-          forms of normalization of the password before hashing <xref target="RFC8265" />.
+          forms of normalization of the password before hashing <xref target="RFC8265"/>.
           The hashing algorithm SHOULD be a MHF so as to slow down brute-force
           attackers. </t>
 
@@ -183,7 +183,7 @@
       </section>
 
       <section title="SPAKE2+" anchor="spake2plus">
-        <t>This protocol appears in <xref target="TDH" />. We
+        <t>This protocol appears in <xref target="TDH"/>. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
           and w1, derived by hashing the password pw with the identities of the two
           participants, A and B. Specifically,
@@ -256,10 +256,10 @@
             for G, Hash, KDF, and MAC functions, respectively.</t>
 
             <texttable anchor="spake2_ciphersuites" title="SPAKE2(+) Ciphersuites">
-                <ttcol align='center'>G</ttcol>
-                <ttcol align='center'>Hash</ttcol>
-                <ttcol align='center'>KDF</ttcol>
-                <ttcol align='center'>MAC</ttcol>
+                <ttcol align="center">G</ttcol>
+                <ttcol align="center">Hash</ttcol>
+                <ttcol align="center">KDF</ttcol>
+                <ttcol align="center">MAC</ttcol>
 
                 <!-- P256-SHA256-HKDF-HMAC -->
                 <c>P-256</c>
@@ -319,8 +319,8 @@
         <t>The following points represent permissible point generation seeds
             for the groups listed in the Table <xref target="spake2_ciphersuites"/>,
             using the algorithm presented in <xref target="pointgen"/>.
-            These bytestrings are compressed points as in <xref target="SEC1" />
-            for curves from <xref target="SEC1" />.</t>
+            These bytestrings are compressed points as in <xref target="SEC1"/>
+            for curves from <xref target="SEC1"/>.</t>
 
       <t>For P256:</t>
 
@@ -388,13 +388,12 @@ seed: edwards448 point generation seed (N)
 
     </section>
     <section title="Security Considerations">
-      <t>A security proof of SPAKE2 for prime order groups is found in <xref
-          target="REF" />.  Note that the choice of M and N is critical for the
+      <t>A security proof of SPAKE2 for prime order groups is found in <xref target="REF"/>.  Note that the choice of M and N is critical for the
         security proof.  The generation method specified in this document is
         designed to eliminate concerns related to knowing discrete logs of M
         and N.</t>
 
-      <t>SPAKE2+ appears in <xref target="TDH" /> along with a path to a proof that
+      <t>SPAKE2+ appears in <xref target="TDH"/> along with a path to a proof that
         server compromise does not lead to password compromise under the DH assumption
         (though the corresponding model excludes precomputation attacks).</t>
 
@@ -434,9 +433,9 @@ seed: edwards448 point generation seed (N)
           <author>
             <organization>SEC</organization>
           </author>
-          <date month="May" year="2009" />
+          <date month="May" year="2009"/>
         </front>
-        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
+        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf"/>
       </reference>
       &RFC2104;
       &RFC2119;
@@ -453,9 +452,9 @@ seed: edwards448 point generation seed (N)
       <reference anchor="REF">
         <front>
           <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
-          <author initials="M." surname="Abdalla" />
-          <author initials="D." surname="Pointcheval" />
-          <date month="Feb" year="2005" />
+          <author initials="M." surname="Abdalla"/>
+          <author initials="D." surname="Pointcheval"/>
+          <date month="Feb" year="2005"/>
         </front>
         <annotation>Appears in A. Menezes, editor. Topics in
           Cryptography-CT-RSA 2005, Volume 3376 of Lecture Notes in Computer
@@ -466,10 +465,10 @@ seed: edwards448 point generation seed (N)
       <reference anchor="TDH">
         <front>
           <title>The Twin-Diffie Hellman Problem and Applications</title>
-          <author initials="D." surname="Cash" />
-          <author initials="E." surname="Kiltz" />
-          <author initials="V." surname="Shoup" />
-          <date year="2008" />
+          <author initials="D." surname="Cash"/>
+          <author initials="E." surname="Kiltz"/>
+          <author initials="V." surname="Shoup"/>
+          <date year="2008"/>
         </front>
         <annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
           Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
@@ -483,7 +482,7 @@ seed: edwards448 point generation seed (N)
       the points (M) and (N) in the table in <xref target="Ciphersuites"/>.</t>
 
       <t>For each curve in the table below, we construct a string
-      using the curve OID from <xref target="RFC5480" /> (as an ASCII
+      using the curve OID from <xref target="RFC5480"/> (as an ASCII
       string) or its name,
       combined with the needed constant, for instance "1.3.132.0.35
       point generation seed (M)" for P-512.  This string is turned
@@ -498,16 +497,16 @@ seed: edwards448 point generation seed (N)
       desired length.  The byte string is then formatted as required
       for the group.  In the case of Weierstrass curves, we take the
       desired length as the length for representing a compressed point
-      (section 2.3.4 of <xref target="SEC1" />),
+      (section 2.3.4 of <xref target="SEC1"/>),
       and use the low-order bit of the first byte as the sign bit.
       In order to obtain the correct format, the value of the first
       byte is set to 0x02 or 0x03 (clearing the first six bits
       and setting the seventh bit), leaving the sign bit as it was
       in the byte string constructed by concatenating hash blocks.
-      For the <xref target="RFC8032" /> curves a different procedure is used.
+      For the <xref target="RFC8032"/> curves a different procedure is used.
       For edwards448 the 57-byte input has the least-significant 7 bits of the
       last byte set to zero, and for edwards25519 the 32-byte input is
-      not modified.  For both the <xref target="RFC8032" /> curves the
+      not modified.  For both the <xref target="RFC8032"/> curves the
       (modified) input is then interpreted
       as the representation of the group element.
       If this interpretation yields a valid group element with the
@@ -522,7 +521,7 @@ seed: edwards448 point generation seed (N)
       <t>The following python snippet generates the above points,
       assuming an elliptic curve implementation following the
       interface of Edwards25519Point.stdbase() and
-      Edwards448Point.stdbase() in Appendix A of <xref target="RFC8032" />:</t>
+      Edwards448Point.stdbase() in Appendix A of <xref target="RFC8032"/>:</t>
 
       <figure><artwork><![CDATA[
 def iterated_hash(seed, n):
