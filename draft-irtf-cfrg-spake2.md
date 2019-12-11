@@ -58,7 +58,7 @@ informative:
 
 This document describes SPAKE2 and its augmented variant SPAKE2+, which are
 protocols for two parties that share a password to derive a strong shared key
-with no risk of disclosing the password. This method is compatible with any
+with no risk of disclosing the password.  This method is compatible with any
 prime order group, is computationally efficient, and SPAKE2 (but not SPAKE2+)
 has a security proof.
 
@@ -90,51 +90,51 @@ when, and only when, they appear in all capitals, as shown here.
 ## Setup
 
 Let G be a group in which the computational Diffie-Hellman (CDH) problem is
-hard. Suppose G has order `p*h` where p is a large prime; h will be called the
-cofactor. Let I be the unit element in G, e.g., the point at infinity if G is an
-elliptic curve group. We denote the operations in the group additively. We
+hard.  Suppose G has order `p*h` where p is a large prime; h will be called the
+cofactor.  Let I be the unit element in G, e.g., the point at infinity if G is an
+elliptic curve group.  We denote the operations in the group additively.  We
 assume there is a representation of elements of G as byte strings: common
 choices would be SEC1 uncompressed or compressed {{SEC1}} for elliptic curve
 groups or big endian integers of a fixed (per-group) length for prime field DH.
 We fix two elements M and N in the prime-order subgroup of G as defined in the
 table in this document for common groups, as well as a generator P of the
-(large) prime-order subgroup of G. P is specified in the document defining the
+(large) prime-order subgroup of G.  P is specified in the document defining the
 group, and so we do not repeat it here.
 
-|| denotes concatenation of strings. We also let len(S) denote the length of a
-string in bytes, represented as an eight-byte little- endian number. Finally,
+|| denotes concatenation of strings.  We also let len(S) denote the length of a
+string in bytes, represented as an eight-byte little- endian number.  Finally,
 let nil represent an empty string, i.e., len(nil) = 0.
 
 KDF is a key-derivation function that takes as input a salt, intermediate keying
 material (IKM), info string, and derived key length L to derive a cryptographic
-key of length L. MAC is a Message Authentication Code algorithm that takes a
-secret key and message as input to produce an output. Let Hash be a hash
-function from arbitrary strings to bit strings of a fixed length. Common choices
-for H are SHA256 or SHA512 {{?RFC6234}}. Let MHF be a memory-hard hash function
-designed to slow down brute-force attackers. Scrypt {{?RFC7914}} is a common
-example of this function. The output length of MHF matches that of Hash.
-Parameter selection for MHF is out of scope for this document. {{ciphersuites}}
+key of length L.  MAC is a Message Authentication Code algorithm that takes a
+secret key and message as input to produce an output.  Let Hash be a hash
+function from arbitrary strings to bit strings of a fixed length.  Common choices
+for H are SHA256 or SHA512 {{?RFC6234}}.  Let MHF be a memory-hard hash function
+designed to slow down brute-force attackers.  Scrypt {{?RFC7914}} is a common
+example of this function.  The output length of MHF matches that of Hash.
+Parameter selection for MHF is out of scope for this document.  {{ciphersuites}}
 specifies variants of KDF, MAC, and Hash suitable for use with the protocols
 contained herein.
 
-Let A and B be two parties. A and B may also have digital representations of the
+Let A and B be two parties.  A and B may also have digital representations of the
 parties' identities such as Media Access Control addresses or other names
-(hostnames, usernames, etc). A and B may share Additional Authenticated Data
+(hostnames, usernames, etc).  A and B may share Additional Authenticated Data
 (AAD) of length at most 2^16 - 1 bits that is separate from their identities
 which they may want to include in the protocol execution.  One example of AAD is
 a list of supported protocol versions if SPAKE2(+) were used in a higher-level
-protocol which negotiates use of a particular PAKE. Including this list would
+protocol which negotiates use of a particular PAKE.  Including this list would
 ensure that both parties agree upon the same set of supported protocols and
-therefore prevent downgrade attacks. We also assume A and B share an integer w;
+therefore prevent downgrade attacks.  We also assume A and B share an integer w;
 typically w = MHF(pw) mod p, for a user-supplied password pw.  Standards such
 NIST.SP.800-56Ar3 suggest taking mod p of a hash value that is 64 bits longer
 than that needed to represent p to remove statistical bias introduced by the
-modulation. Protocols using this specification must define the method used to
+modulation.  Protocols using this specification must define the method used to
 compute w: it may be necessary to carry out various forms of normalization of
-the password before hashing {{?RFC8265}}. The hashing algorithm SHOULD be a MHF
+the password before hashing {{?RFC8265}}.  The hashing algorithm SHOULD be a MHF
 so as to slow down brute-force attackers.
 
-We present two protocols below. Note that it is insecure to use the same
+We present two protocols below.  Note that it is insecure to use the same
 password with both protocols; passwords MUST NOT be used for both SPAKE2 and
 SPAKE2+.
 
@@ -142,15 +142,15 @@ SPAKE2+.
 ## Protocol flow
 
 Both SPAKE2 and SPAKE2+ are one round protocols to establish a shared secret
-with an additional round for key confirmation. Prior to invocation, A and B are
+with an additional round for key confirmation.  Prior to invocation, A and B are
 provisioned with information such as the input password needed to run the
 protocol.  During the first round, A sends a public share pA to B, and B
-responds with its own public share pB. Both A and B then derive a shared secret
-used to produce encryption and authentication keys. The latter are used during
-the second round for key confirmation. {{key-schedule-and-key-confirmation}}
+responds with its own public share pB.  Both A and B then derive a shared secret
+used to produce encryption and authentication keys.  The latter are used during
+the second round for key confirmation.  {{key-schedule-and-key-confirmation}}
 details the key derivation and confirmation steps.) In particular, A sends a key
 confirmation message cA to B, and B responds with its own key confirmation
-messgage cB. Both parties MUST NOT consider the protocol complete prior to
+messgage cB.  Both parties MUST NOT consider the protocol complete prior to
 receipt and validation of these key confirmation messages.
 
 This sample trace is shown below.
@@ -177,63 +177,63 @@ calculates `X=x*P` and `T=w*M+X`, then transmits pA=T to B.
 B selects y randomly and uniformly from the integers in [0,p), and calculates
 `Y=y*P`, `S=w*N+Y`, then transmits pB=S to A.
 
-Both A and B calculate a group element K. A calculates it as `h*x*(S-wN)`, while
-B calculates it as `h*y*(T-w*M)`. A knows S because it has received it, and
-likewise B knows T. The multiplication by h prevents small subgroup confinement
-attacks by computing a unique value in the quotient group. (Any text on abstract
+Both A and B calculate a group element K.  A calculates it as `h*x*(S-wN)`, while
+B calculates it as `h*y*(T-w*M)`.  A knows S because it has received it, and
+likewise B knows T.  The multiplication by h prevents small subgroup confinement
+attacks by computing a unique value in the quotient group.  (Any text on abstract
 algebra explains this notion.)
 
 K is a shared value, though it MUST NOT be used as a shared secret.  Both A and
 B must derive two shared secrets from K and the protocol transcript.  This
 prevents man-in-the-middle attackers from inserting themselves into the
-exchange. The transcript TT is encoded as follows:
+exchange.  The transcript TT is encoded as follows:
 
     TT = len(A) || A || len(B) || B || len(S) || S
       || len(T) || T || len(K) || K || len(w) || w
 
-If an identity is absent, it is omitted from the transcript entirely. For
+If an identity is absent, it is omitted from the transcript entirely.  For
 example, if both A and B are absent, then TT = len(S) || S || len(T) || T ||
 len(K) || K || len(w) || w.  Likewise, if only A is absent, TT = len(B) || B ||
 len(S) || S || len(T) || T || len(K) || K || len(w) || w.  This must only be
-done for applications in which identities are implicit. Otherwise, the protocol
+done for applications in which identities are implicit.  Otherwise, the protocol
 risks Unknown Key Share attacks (discussion of Unknown Key Share attacks in a
 specific protocol is given in {{?I-D.ietf-mmusic-sdp-uks}}.
 
 Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and
-KcB as specified in {{key-schedule-and-key-confirmation}}. A MUST send B a key
-confirmation message so both parties agree upon these shared secrets. This
+KcB as specified in {{key-schedule-and-key-confirmation}}.  A MUST send B a key
+confirmation message so both parties agree upon these shared secrets.  This
 confirmation message F is computed as a MAC over the protocol transcript TT
-using KcA, as follows: F = MAC(KcA, TT). Similarly, B MUST send A a confirmation
-message using a MAC computed equivalently except with the use of KcB. Key
+using KcA, as follows: F = MAC(KcA, TT).  Similarly, B MUST send A a confirmation
+message using a MAC computed equivalently except with the use of KcB.  Key
 confirmation verification requires computing F and checking for equality against
 that which was received.
 
 
 ## SPAKE2+ {#spake2plus}
 
-This protocol appears in {{TDH}}. We use the same setup as for SPAKE2, except
+This protocol appears in {{TDH}}.  We use the same setup as for SPAKE2, except
 that we have two secrets, w0 and w1, derived by hashing the password pw with the
-identities of the two participants, A and B. Specifically, w0s || w1s =
+identities of the two participants, A and B.  Specifically, w0s || w1s =
 MHF(len(pw) || pw || len(A) || A || len(B) || B), and then computing w0 = w0s
 mod p and w1 = w1s mod p.  If both identities A and B are absent, then w0s ||
 w1s = MHF(pw), i.e., the length prefix is omitted as in {{setup}}.  The length
 of each of w0s and w1s is equal to half of the MHF output, e.g., |w0s| = |w1s| =
-128 bits for scrypt.  w0 and w1 MUST NOT equal I. If they are, they MUST be
+128 bits for scrypt.  w0 and w1 MUST NOT equal I.  If they are, they MUST be
 iteratively regenerated by computing w0s || w1s = MHF(len(pw) || pw || len(A) ||
-A || len(B) || B || 0x0000), where 0x0000 is 16-bit increasing counter. This
-process must repeat until valid w0 and w1 are produced. B stores `L=w1*P` and
+A || len(B) || B || 0x0000), where 0x0000 is 16-bit increasing counter.  This
+process must repeat until valid w0 and w1 are produced.  B stores `L=w1*P` and
 w0.
 
 When executing SPAKE2+, A selects x uniformly at random from the numbers in the
-range [0, p), and lets `X=x*P+w0*M`, then transmits pA=X to B. Upon receipt of
-X, A computes `h*X` and aborts if the result is equal to I. B then selects y
+range [0, p), and lets `X=x*P+w0*M`, then transmits pA=X to B.  Upon receipt of
+X, A computes `h*X` and aborts if the result is equal to I.  B then selects y
 uniformly at random from the numbers in [0, p), then computes `Y=y*P+w0*N`, and
 transmits pB=Y to A.
 
-A computes Z as `h*x*(Y-w0*N)`, and V as `h*w1*(Y-w0*N)`. B computes Z as
-`h*y*(X- w0*M)` and V as `h*y*L`. Both share Z and V as common keys. It is
+A computes Z as `h*x*(Y-w0*N)`, and V as `h*w1*(Y-w0*N)`.  B computes Z as
+`h*y*(X- w0*M)` and V as `h*y*L`.  Both share Z and V as common keys.  It is
 essential that both Z and V be used in combination with the transcript to derive
-the keying material. The protocol transcript encoding is shown below.
+the keying material.  The protocol transcript encoding is shown below.
 
     TT = len(A) || A || len(B) || B || len(X) || X
       || len(Y) || Y || len(Z) || Z || len(V) || V
@@ -249,8 +249,8 @@ confirmation steps as outlined in {{spake2}}.
 # Key Schedule and Key Confirmation
 
 The protocol transcript TT, as defined in {{spake2}} and {{spake2plus}}, is unique
-and secret to A and B. Both parties use TT to derive shared symmetric secrets Ke
-and Ka as Ke || Ka = Hash(TT). The length of each key is equal to half of the
+and secret to A and B.  Both parties use TT to derive shared symmetric secrets Ke
+and Ka as Ke || Ka = Hash(TT).  The length of each key is equal to half of the
 digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.
 
 Both endpoints use Ka to derive subsequent MAC keys for key confirmation
@@ -267,15 +267,15 @@ associated data AAD, is as follows.
     TT  -> Hash(TT) = Ka || Ke
     AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
 
-A and B output Ke as the shared secret from the protocol. Ka and its derived
+A and B output Ke as the shared secret from the protocol.  Ka and its derived
 keys are not used for anything except key confirmation.
 
 
 # Ciphersuites
 
-This section documents SPAKE2 and SPAKE2+ ciphersuite configurations. A
+This section documents SPAKE2 and SPAKE2+ ciphersuite configurations.  A
 ciphersuite indicates a group, cryptographic hash algorithm, and pair of KDF and
-MAC functions, e.g., SPAKE2-P256-SHA256-HKDF-HMAC. This ciphersuite indicates a
+MAC functions, e.g., SPAKE2-P256-SHA256-HKDF-HMAC.  This ciphersuite indicates a
 SPAKE2 protocol instance over P-256 that uses SHA256 along with HKDF
 {{?RFC5869}} and HMAC {{?RFC2104}} for G, Hash, KDF, and MAC functions,
 respectively.
@@ -414,17 +414,17 @@ does not lead to password compromise under the DH assumption (though the
 corresponding model excludes precomputation attacks).
 
 Elements received from a peer MUST be checked for group membership: failure to
-properly validate group elements can lead to attacks. Beyond the cofactor
+properly validate group elements can lead to attacks.  Beyond the cofactor
 multiplication checks to ensure that these elements are in the prime order
 subgroup of G, it is essential that endpoints verify received points are members
 of G.
 
-The choices of random numbers MUST BE uniform. Randomly generated values (e.g.,
+The choices of random numbers MUST BE uniform.  Randomly generated values (e.g.,
 x and y) MUST NOT be reused; such reuse may permit dictionary attacks on the
 password.
 
-SPAKE2 does not support augmentation. As a result, the server has to store a
-password equivalent. This is considered a significant drawback, and so SPAKE2+
+SPAKE2 does not support augmentation.  As a result, the server has to store a
+password equivalent.  This is considered a significant drawback, and so SPAKE2+
 also appears in this document.
 
 
@@ -436,10 +436,10 @@ No IANA action is required.
 # Acknowledgments
 
 Special thanks to Nathaniel McCallum and Greg Hudson for generation of test
-vectors.  Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
-Hudson also suggested the addition of warnings on the reuse of x and y. Thanks
+vectors.  Thanks to Mike Hamburg for advice on how to deal with cofactors.  Greg
+Hudson also suggested the addition of warnings on the reuse of x and y.  Thanks
 to Fedor Brunner, Adam Langley, and the members of the CFRG for comments and
-advice. Chris Wood contributed substantial text and reformatting to address the
+advice.  Chris Wood contributed substantial text and reformatting to address the
 excellent review comments from Kenny Paterson.  Trevor Perrin informed me of
 SPAKE2+.
 
@@ -474,7 +474,7 @@ curves the (modified) input is then interpreted as the representation of the
 group element.  If this interpretation yields a valid group element with the
 correct order (p), the (modified) byte string is the output.  Otherwise, the
 initial hash block is discarded and a new byte string constructed from the
-remaining hash blocks. The procedure of constructing a byte string of the
+remaining hash blocks.  The procedure of constructing a byte string of the
 appropriate length, formatting it as required for the curve, and checking if it
 is a valid point of the correct order, is repeated until a valid element is
 found.
@@ -517,16 +517,16 @@ Edwards448Point.stdbase() in Appendix A of {{?RFC8032}}:
 # Test Vectors
 
 This section contains test vectors for SPAKE2 and SPAKE2+ using the
-P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted and values for w
+P256-SHA256-HKDF-HMAC ciphersuite.  (Choice of MHF is omitted and values for w
 and w0,w1 are provided directly.) All points are encoded using the uncompressed
 format, i.e., with a 0x04 octet prefix, specified in {{SEC1}} A and B identity
 strings are provided in the protocol invocation.
 
 ## SPAKE2 Test Vectors
 
-    SPAKE2(A='client', B='server') 
+    SPAKE2(A='client', B='server')
     w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-    e6 
+    e6
     X = 0x04ac6827b3a9110d1e663bcd4f5de668da34a9f45e464e99067bbea53f1ed4
     d8abbdd234c05b3a3a8a778ee47f244cca1a79acb7052d5e58530311a9af077ba179
     T = 0x04e02acfbbfb081fc38b5bab999b5e25a5ffd0b1ac48eae24fcc8e49ac5e0d
@@ -543,19 +543,19 @@ strings are provided in the protocol invocation.
     c5a911f3e10a16b410000000000000004d01fc08bbae9b6abe2f4d6893cc9f810433
     2e19be5f5881c6b9f077e1feff55023da74db65fae320fad8f0dd38e1323f5336f3f
     53c9c9dec06710f18f556bd2020000000000000007741cf8c80b9bee583abac3d38d
-    aa6b807fed38b06580cb75ee85319d25fede6 
-    Ka = 0x2b5e350c58d530c3586f75bf2a155c4b 
-    Ke = 0x238509f7adf0dc72500b2d1315737a27 
-    KcA = 0xc33d2ef8e37a7e545c14c7fcfdc9db94 
-    KcB = 0x18a81cec7eb83416db6615cb3bc03fcb 
+    aa6b807fed38b06580cb75ee85319d25fede6
+    Ka = 0x2b5e350c58d530c3586f75bf2a155c4b
+    Ke = 0x238509f7adf0dc72500b2d1315737a27
+    KcA = 0xc33d2ef8e37a7e545c14c7fcfdc9db94
+    KcB = 0x18a81cec7eb83416db6615cb3bc03fcb
     MAC(A) = 0x29e9a63d243f2f0db5532d2eb0dbaa617803b85feb31566d0cb9457e3
-    03bcfa6 
+    03bcfa6
     MAC(B) = 0x487e4cbe98b6287272d043e169a19b6c4682d0481c92f53f1ee03d4b8
-    6c3f43e 
+    6c3f43e
 
-    SPAKE2(A='client', B='') 
+    SPAKE2(A='client', B='')
     w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-    e6 
+    e6
     X = 0x048b5d7b44b02c4c868f4486ec55bd2380ec34cd5fa5dbff1079a79097e305
     0b34fa91272331729357c86cbb30d371e252dc915aeaa314921b1f09f74816f96a12
     T = 0x04839f44931b88d12769e601d0ec480b6c9ea95e70ba361ba14bf513e5186a
@@ -572,19 +572,19 @@ strings are provided in the protocol invocation.
     000041d9e3c88db68247ab50264a6090e2e524bda3049dbc53c4df708e37bd76913b
     8cf5954c4d0f835331f185fef4ff1c6115cf0eb8ce27e8224bf5f76c75b182308200
     00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-    9d25fede6 
-    Ka = 0xfc8482d5d7623a75ad09721d631d1392 
-    Ke = 0x93f618fe24d0d5a54b320f498dbd3ecb 
-    KcA = 0x75b20fc4205d6217a22156f918dd03b1 
-    KcB = 0x3bf3a5d3876d9d12dc54cab927acd5f7 
+    9d25fede6
+    Ka = 0xfc8482d5d7623a75ad09721d631d1392
+    Ke = 0x93f618fe24d0d5a54b320f498dbd3ecb
+    KcA = 0x75b20fc4205d6217a22156f918dd03b1
+    KcB = 0x3bf3a5d3876d9d12dc54cab927acd5f7
     MAC(A) = 0xd4994b751eb832b2836ad674cd615c643053278864a63e263bc2f324b
-    9a04ddd 
+    9a04ddd
     MAC(B) = 0x23cf761999b7603adf5507b50c9bda4eaabe8fa7a9ad0280729dfcd00
-    8b2bf05 
+    8b2bf05
 
-    SPAKE2(A='', B='server') 
+    SPAKE2(A='', B='server')
     w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-    e6 
+    e6
     X = 0x0465e8b4709ba622bc97af5dde3b41757c2114bfc5abb10141245cb01d62ca
     0d7360e1169cd518f9351bbfa44a66cc5f3bcb60661a04f39b04a3d504046db67884
     T = 0x0482f64286419ff46362faf781776edf908740b8ff612e0bfe3c90cdc553ba
@@ -601,19 +601,19 @@ strings are provided in the protocol invocation.
     00004a406929024a5275372531c85c54fd222f35bfdb1cdf1bd1abe82d5c837744d9
     3ea2979962eb374d4feda37b178e91711c52edd453178cf69748e0a3d9ef073c2200
     00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-    9d25fede6 
-    Ka = 0xcd9c33c6329761919486d0041faccb56 
-    Ke = 0xa08125eeed51c61ad93b2ff7d8ec3cd5 
-    KcA = 0x60056386cbe06ba199fa6aef81dfb273 
-    KcB = 0x5e5a591b4426d47190aecb2fc4527140 
+    9d25fede6
+    Ka = 0xcd9c33c6329761919486d0041faccb56
+    Ke = 0xa08125eeed51c61ad93b2ff7d8ec3cd5
+    KcA = 0x60056386cbe06ba199fa6aef81dfb273
+    KcB = 0x5e5a591b4426d47190aecb2fc4527140
     MAC(A) = 0xf0dcfb4fa874e3fcbadd44b6eb26a64d1d5c6e50034934934551f172d
-    3cdc50e 
+    3cdc50e
     MAC(B) = 0x52e7a505c0b73db656108554a854c3f33bfb01edcc1ee52aa27ceb1cb
-    ef7f47b 
+    ef7f47b
 
-    SPAKE2(A='', B='') 
+    SPAKE2(A='', B='')
     w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-    e6 
+    e6
     X = 0x04fbeb44d6b772fa390fcced51be7316107e608ddf4ab5dcc9f1b2e24bf667
     7f3232cdeeb39a61621a9e48028997d449894212eb54b6f12bdbd9baf8f1c909a740
     T = 0x04887af8439d743215f26d48314835b024b9301ea508eac3a339241672fbba
@@ -629,24 +629,24 @@ strings are provided in the protocol invocation.
     92aed84a859fd4960d99fcec777410000000000000004aacd2378990cecd338c7cac
     d132ce633bc424ac5d4ab32f539ccf31f15deef62463253790e139b461c5137944fc
     6a5ffd895dbe0d3960b01f6d662fc41057a7020000000000000007741cf8c80b9bee
-    583abac3d38daa6b807fed38b06580cb75ee85319d25fede6 
-    Ka = 0x16b10f1541c24c630f462f7e0aa57ddf 
-    Ke = 0xb7ae8b61938e3dfad8b9ce1d2865533f 
-    KcA = 0x3398d6c7de402a9ae89a4594d5576c21 
-    KcB = 0x6894ab44d7ba7f3a40a772d1476593d9 
+    583abac3d38daa6b807fed38b06580cb75ee85319d25fede6
+    Ka = 0x16b10f1541c24c630f462f7e0aa57ddf
+    Ke = 0xb7ae8b61938e3dfad8b9ce1d2865533f
+    KcA = 0x3398d6c7de402a9ae89a4594d5576c21
+    KcB = 0x6894ab44d7ba7f3a40a772d1476593d9
     MAC(A) = 0x12fce7f0aecc1dba393a7e5612e6357becc5e3d07cd41ffd35c6d652f
-    29cde60 
+    29cde60
     MAC(B) = 0xac36c6d186c3b824f4cfe099f035cf3aed4162d08886d32fa1806e5bf
-    4015255 
+    4015255
 
 
 ## SPAKE2+ Test Vectors
 
-    SPAKE2+(A='client', B='server') 
+    SPAKE2+(A='client', B='server')
     w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-    cf8 
+    cf8
     w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-    855 
+    855
     L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
     c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
     X = 0x04879567d09560c02be565429036ed1d2fc3ca53f2eb6fadda4dba09eff3a0
@@ -667,21 +667,21 @@ strings are provided in the protocol invocation.
     0ca47a48eea273375a0c72ca141000000000000000417658e1e9707a29d429a4733d
     3bee703574aec222e781a6e7e5f5e50490811aabf28e112fee32a37c228df9b53e62
     20468a2f6f07427604d8917870ac965eec720000000000000004f9e28322a64f9dc7
-    a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8 
-    Ka = 0xbf800062847c5182bf5c549b05ea6cce 
-    Ke = 0xce9acf88ff9440777bda3e34fa4993cd 
-    KcA = 0x73c6a5597096e99b8025172bb45b4a2f 
-    KcB = 0x96a801673bd07b51d61fbaea03ef17cf 
+    a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8
+    Ka = 0xbf800062847c5182bf5c549b05ea6cce
+    Ke = 0xce9acf88ff9440777bda3e34fa4993cd
+    KcA = 0x73c6a5597096e99b8025172bb45b4a2f
+    KcB = 0x96a801673bd07b51d61fbaea03ef17cf
     MAC(A) = 0xcab37c89192f9ad90ca5e6b8eadb130d313b51d24b7889e2536f7c800
-    26e076a 
+    26e076a
     MAC(B) = 0xf7076a78a3d16f0c62cb9e40bd1a91b68dee144b87016e2dae81c36e9
-    73f3b2e 
+    73f3b2e
 
-    SPAKE2+(A='client', B='') 
+    SPAKE2+(A='client', B='')
     w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-    cf8 
+    cf8
     w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-    855 
+    855
     L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
     c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
     X = 0x0426fbedb3b9ccea93d609838dcc1d4baebdbb9c287763ed4cdb2d3cc76f78
@@ -702,21 +702,21 @@ strings are provided in the protocol invocation.
     000000000000004729f7c6c5bd68310345b1a10b84ea7db64c70441da2255992208b
     7a8e0b39d4f0e634acf7d440b4552a41df291ac6a409f8cf5a47cec9fed5f85fea12
     41379a420000000000000004f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805c
-    a84f4ed3ef806516cf8 
-    Ka = 0xfd19104b836b0ba9dfaaeab88610be57 
-    Ke = 0x90337374f974f673707de5ba1b98e5b8 
-    KcA = 0x2e10249c566677c8826b48ad10b19bb5 
-    KcB = 0x4fcaf8fd0bfcaeeabb9d6f48e264e4a3 
+    a84f4ed3ef806516cf8
+    Ka = 0xfd19104b836b0ba9dfaaeab88610be57
+    Ke = 0x90337374f974f673707de5ba1b98e5b8
+    KcA = 0x2e10249c566677c8826b48ad10b19bb5
+    KcB = 0x4fcaf8fd0bfcaeeabb9d6f48e264e4a3
     MAC(A) = 0xaaef200ea5f5c41e1fdb9b3455dde715cd8aa96f8afd3274f7159c3c5
-    4887f2c 
+    4887f2c
     MAC(B) = 0x926eadbf4b720b46ea622d7100e0013eb24d1591496846a604cf90c14
-    46fe0e4 
+    46fe0e4
 
-    SPAKE2+(A='', B='server') 
+    SPAKE2+(A='', B='server')
     w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-    cf8 
+    cf8
     w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-    855 
+    855
     L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
     c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
     X = 0x0463a7531acd204e7d83ac6562278d7ced01a715eff937a25520bd2220c626
@@ -737,21 +737,21 @@ strings are provided in the protocol invocation.
     00000000000000408a70fc9dca87b70a7d4a074bdcca0222806f0caa0542d8d62aec
     f535ea8ffbc5e48419c5127a0f7f03685013c09d22f797523d26e7db159fecaccebc
     54ed2a720000000000000004f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805c
-    a84f4ed3ef806516cf8 
-    Ka = 0x5c85900898b2079c9de09ebef63cebd1 
-    Ke = 0x13c812476859e909682c3be7436bfef0 
-    KcA = 0x77bd636ab9bf153339c5724ee04f87a7 
-    KcB = 0x194325b27d7c291c94a689ddafeaaa3c 
+    a84f4ed3ef806516cf8
+    Ka = 0x5c85900898b2079c9de09ebef63cebd1
+    Ke = 0x13c812476859e909682c3be7436bfef0
+    KcA = 0x77bd636ab9bf153339c5724ee04f87a7
+    KcB = 0x194325b27d7c291c94a689ddafeaaa3c
     MAC(A) = 0x3bb61248a1fd2946743314848fc501eb3455eb113bd8966e200de14d5
-    e412688 
+    e412688
     MAC(B) = 0x3e7912bd2a85a1f56d36fbb16de29834b000d49e50d4c17f992942ee5
-    9255f1e 
+    9255f1e
 
-    SPAKE2+(A='', B='') 
+    SPAKE2+(A='', B='')
     w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-    cf8 
+    cf8
     w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-    855 
+    855
     L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
     c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
     X = 0x04f60f506cfa07506d4bfd2b3f56038b1c001fe6826374122c30e914747eab
@@ -771,12 +771,12 @@ strings are provided in the protocol invocation.
     8e9a314f1deb75f77bde276d3cc8b45ffd70c410000000000000004845c130c8c208
     65828e21ed3400abea726b07fdeb7533fa6017accc37e0be4922241dad44846112e4
     2bee999501fdb4d09fc798e4677d403d10bfa862928584e20000000000000004f9e2
-    8322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8 
-    Ka = 0x850a18a77b14ef5e71b4a239413630a8 
-    Ke = 0x4454819282b3e886a7e65b7b0de7cc62 
-    KcA = 0x05df6196c12d6203768c73d875e2bfc5 
-    KcB = 0xb58e61c322f685add02c125767e4fbb7 
+    8322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8
+    Ka = 0x850a18a77b14ef5e71b4a239413630a8
+    Ke = 0x4454819282b3e886a7e65b7b0de7cc62
+    KcA = 0x05df6196c12d6203768c73d875e2bfc5
+    KcB = 0xb58e61c322f685add02c125767e4fbb7
     MAC(A) = 0x33e50d29f8eacc67bfdab4a6c46c88d75ac3308416c64dfbb0d7fb1c0
-    feda5b0 
+    feda5b0
     MAC(B) = 0x55434e5e501ad2d476aa1ae334ef27ba437a5dea87683defac575a63b
-    548ca64 
+    548ca64
