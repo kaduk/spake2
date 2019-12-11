@@ -114,13 +114,13 @@
       </section>
 
       <section title="Protocol Flow" anchor="flow">
-        <t>Both SPAKE2 and SPAKE2+ are one round protocols to establish a shared secret with an 
+        <t>Both SPAKE2 and SPAKE2+ are one round protocols to establish a shared secret with an
           additional round for key confirmation. Prior to invocation, A and B are provisioned with
-          information such as the input password needed to run the protocol. 
-          During the first round, A sends a public share pA 
+          information such as the input password needed to run the protocol.
+          During the first round, A sends a public share pA
           to B, and B responds with its own public share pB. Both A and B then derive a shared secret
           used to produce encryption and authentication keys. The latter are used during the second
-          round for key confirmation. (<xref target="keys"/> details the key derivation and 
+          round for key confirmation. (<xref target="keys"/> details the key derivation and
           confirmation steps.) In particular, A sends a key confirmation message cA to B, and B responds
           with its own key confirmation messgage cB. Both parties MUST NOT consider the protocol complete
           prior to receipt and validation of these key confirmation messages.</t>
@@ -133,7 +133,7 @@
                 |----------------->|
                 |        pB        | (compute pB)
                 |<-----------------|
-                |                  | 
+                |                  |
                 | (derive secrets) |
   (compute cA)  |        cA        |
                 |----------------->|
@@ -162,7 +162,7 @@
           the exchange. The transcript TT is encoded as follows:</t>
 
         <figure><artwork><![CDATA[
-	TT = len(A) || A || len(B) || B || len(S) || S 
+	TT = len(A) || A || len(B) || B || len(S) || S
           || len(T) || T || len(K) || K || len(w) || w
         ]]></artwork></figure>
 
@@ -211,8 +211,8 @@
           derive the keying material. The protocol transcript encoding is shown below.</t>
 
         <figure><artwork><![CDATA[
-            TT = len(A) || A || len(B) || B || len(X) || X 
-              || len(Y) || Y || len(Z) || Z || len(V) || V 
+            TT = len(A) || A || len(B) || B || len(X) || X
+              || len(Y) || Y || len(Z) || Z || len(V) || V
               || len(w0) || w0
         ]]></artwork></figure>
 
@@ -557,9 +557,9 @@ def gen_point(seed, ecname, ec):
     </section>
 
     <section anchor="testvectors" title="Test Vectors">
-      <t>This section contains test vectors for SPAKE2 and SPAKE2+ using 
+      <t>This section contains test vectors for SPAKE2 and SPAKE2+ using
         the P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted
-        and values for w and w0,w1 are provided directly.) All points are 
+        and values for w and w0,w1 are provided directly.) All points are
         encoded using the uncompressed format, i.e., with a 0x04 octet
         prefix, specified in <xref target="SEC1"/> A and B identity strings
         are provided in the protocol invocation.
@@ -567,9 +567,9 @@ def gen_point(seed, ecname, ec):
 
       <section title="SPAKE2 Test Vectors">
         <figure><artwork><![CDATA[
-SPAKE2(A='client', B='server') 
+SPAKE2(A='client', B='server')
 w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
+e6
 X = 0x04ac6827b3a9110d1e663bcd4f5de668da34a9f45e464e99067bbea53f1ed4
 d8abbdd234c05b3a3a8a778ee47f244cca1a79acb7052d5e58530311a9af077ba179
 T = 0x04e02acfbbfb081fc38b5bab999b5e25a5ffd0b1ac48eae24fcc8e49ac5e0d
@@ -586,19 +586,19 @@ efeba410000000000000004e02acfbbfb081fc38b5bab999b5e25a5ffd0b1ac48eae
 c5a911f3e10a16b410000000000000004d01fc08bbae9b6abe2f4d6893cc9f810433
 2e19be5f5881c6b9f077e1feff55023da74db65fae320fad8f0dd38e1323f5336f3f
 53c9c9dec06710f18f556bd2020000000000000007741cf8c80b9bee583abac3d38d
-aa6b807fed38b06580cb75ee85319d25fede6 
-Ka = 0x2b5e350c58d530c3586f75bf2a155c4b 
-Ke = 0x238509f7adf0dc72500b2d1315737a27 
-KcA = 0xc33d2ef8e37a7e545c14c7fcfdc9db94 
-KcB = 0x18a81cec7eb83416db6615cb3bc03fcb 
+aa6b807fed38b06580cb75ee85319d25fede6
+Ka = 0x2b5e350c58d530c3586f75bf2a155c4b
+Ke = 0x238509f7adf0dc72500b2d1315737a27
+KcA = 0xc33d2ef8e37a7e545c14c7fcfdc9db94
+KcB = 0x18a81cec7eb83416db6615cb3bc03fcb
 MAC(A) = 0x29e9a63d243f2f0db5532d2eb0dbaa617803b85feb31566d0cb9457e3
-03bcfa6 
+03bcfa6
 MAC(B) = 0x487e4cbe98b6287272d043e169a19b6c4682d0481c92f53f1ee03d4b8
-6c3f43e 
+6c3f43e
 
-SPAKE2(A='client', B='') 
+SPAKE2(A='client', B='')
 w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
+e6
 X = 0x048b5d7b44b02c4c868f4486ec55bd2380ec34cd5fa5dbff1079a79097e305
 0b34fa91272331729357c86cbb30d371e252dc915aeaa314921b1f09f74816f96a12
 T = 0x04839f44931b88d12769e601d0ec480b6c9ea95e70ba361ba14bf513e5186a
@@ -615,19 +615,19 @@ TT = 0x0600000000000000636c69656e744100000000000000042926b2dbcc5d0cb
 000041d9e3c88db68247ab50264a6090e2e524bda3049dbc53c4df708e37bd76913b
 8cf5954c4d0f835331f185fef4ff1c6115cf0eb8ce27e8224bf5f76c75b182308200
 00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-9d25fede6 
-Ka = 0xfc8482d5d7623a75ad09721d631d1392 
-Ke = 0x93f618fe24d0d5a54b320f498dbd3ecb 
-KcA = 0x75b20fc4205d6217a22156f918dd03b1 
-KcB = 0x3bf3a5d3876d9d12dc54cab927acd5f7 
+9d25fede6
+Ka = 0xfc8482d5d7623a75ad09721d631d1392
+Ke = 0x93f618fe24d0d5a54b320f498dbd3ecb
+KcA = 0x75b20fc4205d6217a22156f918dd03b1
+KcB = 0x3bf3a5d3876d9d12dc54cab927acd5f7
 MAC(A) = 0xd4994b751eb832b2836ad674cd615c643053278864a63e263bc2f324b
-9a04ddd 
+9a04ddd
 MAC(B) = 0x23cf761999b7603adf5507b50c9bda4eaabe8fa7a9ad0280729dfcd00
-8b2bf05 
+8b2bf05
 
-SPAKE2(A='', B='server') 
+SPAKE2(A='', B='server')
 w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
+e6
 X = 0x0465e8b4709ba622bc97af5dde3b41757c2114bfc5abb10141245cb01d62ca
 0d7360e1169cd518f9351bbfa44a66cc5f3bcb60661a04f39b04a3d504046db67884
 T = 0x0482f64286419ff46362faf781776edf908740b8ff612e0bfe3c90cdc553ba
@@ -644,19 +644,19 @@ e71fa13a693b5ce96ceba5798636555d074648d4521e3b63dc148724100000000000
 00004a406929024a5275372531c85c54fd222f35bfdb1cdf1bd1abe82d5c837744d9
 3ea2979962eb374d4feda37b178e91711c52edd453178cf69748e0a3d9ef073c2200
 00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-9d25fede6 
-Ka = 0xcd9c33c6329761919486d0041faccb56 
-Ke = 0xa08125eeed51c61ad93b2ff7d8ec3cd5 
-KcA = 0x60056386cbe06ba199fa6aef81dfb273 
-KcB = 0x5e5a591b4426d47190aecb2fc4527140 
+9d25fede6
+Ka = 0xcd9c33c6329761919486d0041faccb56
+Ke = 0xa08125eeed51c61ad93b2ff7d8ec3cd5
+KcA = 0x60056386cbe06ba199fa6aef81dfb273
+KcB = 0x5e5a591b4426d47190aecb2fc4527140
 MAC(A) = 0xf0dcfb4fa874e3fcbadd44b6eb26a64d1d5c6e50034934934551f172d
-3cdc50e 
+3cdc50e
 MAC(B) = 0x52e7a505c0b73db656108554a854c3f33bfb01edcc1ee52aa27ceb1cb
-ef7f47b 
+ef7f47b
 
-SPAKE2(A='', B='') 
+SPAKE2(A='', B='')
 w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
+e6
 X = 0x04fbeb44d6b772fa390fcced51be7316107e608ddf4ab5dcc9f1b2e24bf667
 7f3232cdeeb39a61621a9e48028997d449894212eb54b6f12bdbd9baf8f1c909a740
 T = 0x04887af8439d743215f26d48314835b024b9301ea508eac3a339241672fbba
@@ -672,25 +672,25 @@ fc2320da373e146eecd33038ff8099782f3781160244672cb43b4d9f2007da9b617c
 92aed84a859fd4960d99fcec777410000000000000004aacd2378990cecd338c7cac
 d132ce633bc424ac5d4ab32f539ccf31f15deef62463253790e139b461c5137944fc
 6a5ffd895dbe0d3960b01f6d662fc41057a7020000000000000007741cf8c80b9bee
-583abac3d38daa6b807fed38b06580cb75ee85319d25fede6 
-Ka = 0x16b10f1541c24c630f462f7e0aa57ddf 
-Ke = 0xb7ae8b61938e3dfad8b9ce1d2865533f 
-KcA = 0x3398d6c7de402a9ae89a4594d5576c21 
-KcB = 0x6894ab44d7ba7f3a40a772d1476593d9 
+583abac3d38daa6b807fed38b06580cb75ee85319d25fede6
+Ka = 0x16b10f1541c24c630f462f7e0aa57ddf
+Ke = 0xb7ae8b61938e3dfad8b9ce1d2865533f
+KcA = 0x3398d6c7de402a9ae89a4594d5576c21
+KcB = 0x6894ab44d7ba7f3a40a772d1476593d9
 MAC(A) = 0x12fce7f0aecc1dba393a7e5612e6357becc5e3d07cd41ffd35c6d652f
-29cde60 
+29cde60
 MAC(B) = 0xac36c6d186c3b824f4cfe099f035cf3aed4162d08886d32fa1806e5bf
-4015255 
+4015255
     ]]></artwork></figure>
       </section>
 
       <section title="SPAKE2+ Test Vectors">
 <figure><artwork><![CDATA[
-SPAKE2+(A='client', B='server') 
+SPAKE2+(A='client', B='server')
 w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-cf8 
+cf8
 w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-855 
+855
 L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
 c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
 X = 0x04879567d09560c02be565429036ed1d2fc3ca53f2eb6fadda4dba09eff3a0
@@ -711,21 +711,21 @@ fd6fb03acf41aff4100000000000000047bb4661db7085d019cffa8495aba73d22f8
 0ca47a48eea273375a0c72ca141000000000000000417658e1e9707a29d429a4733d
 3bee703574aec222e781a6e7e5f5e50490811aabf28e112fee32a37c228df9b53e62
 20468a2f6f07427604d8917870ac965eec720000000000000004f9e28322a64f9dc7
-a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8 
-Ka = 0xbf800062847c5182bf5c549b05ea6cce 
-Ke = 0xce9acf88ff9440777bda3e34fa4993cd 
-KcA = 0x73c6a5597096e99b8025172bb45b4a2f 
-KcB = 0x96a801673bd07b51d61fbaea03ef17cf 
+a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8
+Ka = 0xbf800062847c5182bf5c549b05ea6cce
+Ke = 0xce9acf88ff9440777bda3e34fa4993cd
+KcA = 0x73c6a5597096e99b8025172bb45b4a2f
+KcB = 0x96a801673bd07b51d61fbaea03ef17cf
 MAC(A) = 0xcab37c89192f9ad90ca5e6b8eadb130d313b51d24b7889e2536f7c800
-26e076a 
+26e076a
 MAC(B) = 0xf7076a78a3d16f0c62cb9e40bd1a91b68dee144b87016e2dae81c36e9
-73f3b2e 
+73f3b2e
 
-SPAKE2+(A='client', B='') 
+SPAKE2+(A='client', B='')
 w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-cf8 
+cf8
 w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-855 
+855
 L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
 c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
 X = 0x0426fbedb3b9ccea93d609838dcc1d4baebdbb9c287763ed4cdb2d3cc76f78
@@ -746,21 +746,21 @@ bb3c4aae2ae4217951aa82144cb8b677be8061f28893f70216c1e11ba2bacd50d410
 000000000000004729f7c6c5bd68310345b1a10b84ea7db64c70441da2255992208b
 7a8e0b39d4f0e634acf7d440b4552a41df291ac6a409f8cf5a47cec9fed5f85fea12
 41379a420000000000000004f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805c
-a84f4ed3ef806516cf8 
-Ka = 0xfd19104b836b0ba9dfaaeab88610be57 
-Ke = 0x90337374f974f673707de5ba1b98e5b8 
-KcA = 0x2e10249c566677c8826b48ad10b19bb5 
-KcB = 0x4fcaf8fd0bfcaeeabb9d6f48e264e4a3 
+a84f4ed3ef806516cf8
+Ka = 0xfd19104b836b0ba9dfaaeab88610be57
+Ke = 0x90337374f974f673707de5ba1b98e5b8
+KcA = 0x2e10249c566677c8826b48ad10b19bb5
+KcB = 0x4fcaf8fd0bfcaeeabb9d6f48e264e4a3
 MAC(A) = 0xaaef200ea5f5c41e1fdb9b3455dde715cd8aa96f8afd3274f7159c3c5
-4887f2c 
+4887f2c
 MAC(B) = 0x926eadbf4b720b46ea622d7100e0013eb24d1591496846a604cf90c14
-46fe0e4 
+46fe0e4
 
-SPAKE2+(A='', B='server') 
+SPAKE2+(A='', B='server')
 w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-cf8 
+cf8
 w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-855 
+855
 L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
 c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
 X = 0x0463a7531acd204e7d83ac6562278d7ced01a715eff937a25520bd2220c626
@@ -781,21 +781,21 @@ cd4d42f4f817caa3360c918d2538d7c96de5db47a72949ca2888d02c18ea6f92b410
 00000000000000408a70fc9dca87b70a7d4a074bdcca0222806f0caa0542d8d62aec
 f535ea8ffbc5e48419c5127a0f7f03685013c09d22f797523d26e7db159fecaccebc
 54ed2a720000000000000004f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805c
-a84f4ed3ef806516cf8 
-Ka = 0x5c85900898b2079c9de09ebef63cebd1 
-Ke = 0x13c812476859e909682c3be7436bfef0 
-KcA = 0x77bd636ab9bf153339c5724ee04f87a7 
-KcB = 0x194325b27d7c291c94a689ddafeaaa3c 
+a84f4ed3ef806516cf8
+Ka = 0x5c85900898b2079c9de09ebef63cebd1
+Ke = 0x13c812476859e909682c3be7436bfef0
+KcA = 0x77bd636ab9bf153339c5724ee04f87a7
+KcB = 0x194325b27d7c291c94a689ddafeaaa3c
 MAC(A) = 0x3bb61248a1fd2946743314848fc501eb3455eb113bd8966e200de14d5
-e412688 
+e412688
 MAC(B) = 0x3e7912bd2a85a1f56d36fbb16de29834b000d49e50d4c17f992942ee5
-9255f1e 
+9255f1e
 
-SPAKE2+(A='', B='') 
+SPAKE2+(A='', B='')
 w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
-cf8 
+cf8
 w1 = 0x8d73e4ca273859c873d809431d15f30e2b722007964e32699160b54fda3ee
-855 
+855
 L = 0x0491bb1e6672e71ad80b17d13f7a72ca2fe7f882d4bd734e2d140f67ab49d2
 c3e76dbcf706954bd9ada4e3a7fc50cf9294729f93b130ada3d3a4ae98cc7e7b6971
 X = 0x04f60f506cfa07506d4bfd2b3f56038b1c001fe6826374122c30e914747eab
@@ -815,15 +815,15 @@ cf87da9fb07dc3745c0630b03bb4100000000000000042adeeea1417cc6c592fef77
 8e9a314f1deb75f77bde276d3cc8b45ffd70c410000000000000004845c130c8c208
 65828e21ed3400abea726b07fdeb7533fa6017accc37e0be4922241dad44846112e4
 2bee999501fdb4d09fc798e4677d403d10bfa862928584e20000000000000004f9e2
-8322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8 
-Ka = 0x850a18a77b14ef5e71b4a239413630a8 
-Ke = 0x4454819282b3e886a7e65b7b0de7cc62 
-KcA = 0x05df6196c12d6203768c73d875e2bfc5 
-KcB = 0xb58e61c322f685add02c125767e4fbb7 
+8322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516cf8
+Ka = 0x850a18a77b14ef5e71b4a239413630a8
+Ke = 0x4454819282b3e886a7e65b7b0de7cc62
+KcA = 0x05df6196c12d6203768c73d875e2bfc5
+KcB = 0xb58e61c322f685add02c125767e4fbb7
 MAC(A) = 0x33e50d29f8eacc67bfdab4a6c46c88d75ac3308416c64dfbb0d7fb1c0
-feda5b0 
+feda5b0
 MAC(B) = 0x55434e5e501ad2d476aa1ae334ef27ba437a5dea87683defac575a63b
-548ca64 
+548ca64
 ]]></artwork></figure>
       </section>
     </section>
