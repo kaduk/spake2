@@ -71,12 +71,10 @@
           in the table in this document for common groups, as well as a generator P
           of the (large) prime-order subgroup of G. P is specified in the document defining
           the group, and so we do not repeat it here.</t>
-
         <t>|| denotes concatenation of strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
           endian number. Finally, let nil represent an empty string, i.e.,
           len(nil) = 0.</t>
-
         <t>KDF is a key-derivation function that takes as input a salt, intermediate
           keying material (IKM), info string, and derived key length L to derive a
           cryptographic key of length L. MAC is a Message
@@ -89,7 +87,6 @@
           of Hash. Parameter selection for MHF is out of scope for this document.
           <xref target="Ciphersuites"/> specifies variants of KDF, MAC, and Hash
           suitable for use with the protocols contained herein.</t>
-
         <t>Let A and B be two parties. A and B may also have digital
           representations of the parties' identities such as Media Access Control addresses
           or other names (hostnames, usernames, etc). A and B may share Additional
@@ -107,12 +104,10 @@
           forms of normalization of the password before hashing <xref target="RFC8265"/>.
           The hashing algorithm SHOULD be a MHF so as to slow down brute-force
           attackers. </t>
-
         <t>We present two protocols below. Note that it is insecure to use the
           same password with both protocols; passwords MUST NOT be used for
           both SPAKE2 and SPAKE2+.</t>
       </section>
-
       <section title="Protocol Flow" anchor="flow">
         <t>Both SPAKE2 and SPAKE2+ are one round protocols to establish a shared secret with an
           additional round for key confirmation. Prior to invocation, A and B are provisioned with
@@ -124,9 +119,9 @@
           confirmation steps.) In particular, A sends a key confirmation message cA to B, and B responds
           with its own key confirmation messgage cB. Both parties MUST NOT consider the protocol complete
           prior to receipt and validation of these key confirmation messages.</t>
-
         <t>This sample trace is shown below.</t>
-        <figure><artwork><![CDATA[
+        <figure>
+          <artwork><![CDATA[
                 A                  B
                 | (setup protocol) |
   (compute pA)  |        pA        |
@@ -139,40 +134,36 @@
                 |----------------->|
                 |        cB        | (compute cB)
                 |<-----------------|
-        ]]></artwork></figure>
+        ]]></artwork>
+        </figure>
       </section>
-
       <section title="SPAKE2" anchor="spake2">
         <t>To begin, A picks x randomly and uniformly from the integers in [0,p),
             and calculates X=x*P and T=w*M+X, then transmits pA=T to B.</t>
-
         <t>B selects y randomly and uniformly from the integers in [0,p), and calculates
             Y=y*P, S=w*N+Y, then transmits pB=S to A.</t>
-
         <t>Both A and B calculate a group element K. A calculates it
         as h*x*(S-wN), while B calculates it as h*y*(T-w*M). A knows S
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
         group. (Any text on abstract algebra explains this notion.)</t>
-
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
           Both A and B must derive two shared secrets from K and the protocol transcript.
           This prevents man-in-the-middle attackers from inserting themselves into
           the exchange. The transcript TT is encoded as follows:</t>
-
-        <figure><artwork><![CDATA[
+        <figure>
+          <artwork><![CDATA[
 	TT = len(A) || A || len(B) || B || len(S) || S
           || len(T) || T || len(K) || K || len(w) || w
-        ]]></artwork></figure>
-
+        ]]></artwork>
+        </figure>
         <t>If an identity is absent, it is omitted from the transcript entirely. For example,
           if both A and B are absent, then TT = len(S) || S || len(T) || T || len(K) || K || len(w) || w.
           Likewise, if only A is absent, TT = len(B) || B || len(S) || S || len(T) || T || len(K) || K || len(w) || w.
           This must only be done for applications in which identities are implicit. Otherwise,
           the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
           in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>.</t>
-
         <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
             specified in <xref target="keys"/>. A MUST send B a key confirmation message
             so both parties agree upon these shared secrets. This confirmation message F
@@ -181,7 +172,6 @@
             computed equivalently except with the use of KcB. Key confirmation verification
             requires computing F and checking for equality against that which was received.</t>
       </section>
-
       <section title="SPAKE2+" anchor="spake2plus">
         <t>This protocol appears in <xref target="TDH"/>. We
           use the same setup as for SPAKE2, except that we have two secrets, w0
@@ -198,133 +188,116 @@
           w0s || w1s = MHF(len(pw) || pw || len(A) || A || len(B) || B || 0x0000),
           where 0x0000 is 16-bit increasing counter. This process must repeat until
           valid w0 and w1 are produced. B stores L=w1*P and w0.</t>
-
         <t>When executing SPAKE2+, A selects x uniformly at random from the
           numbers in the range [0, p), and lets X=x*P+w0*M, then transmits pA=X to
           B. Upon receipt of X, A computes h*X and aborts if the result is equal
           to I. B then selects y uniformly at random from the numbers in [0, p),
           then computes Y=y*P+w0*N, and transmits pB=Y to A. .</t>
-
         <t>A computes Z as h*x*(Y-w0*N), and V as h*w1*(Y-w0*N). B computes Z as h*y*(X-
           w0*M) and V as h*y*L. Both share Z and V as common keys. It is essential
           that both Z and V be used in combination with the transcript to
           derive the keying material. The protocol transcript encoding is shown below.</t>
-
-        <figure><artwork><![CDATA[
+        <figure>
+          <artwork><![CDATA[
             TT = len(A) || A || len(B) || B || len(X) || X
               || len(Y) || Y || len(Z) || Z || len(V) || V
               || len(w0) || w0
-        ]]></artwork></figure>
-
+        ]]></artwork>
+        </figure>
         <t>As in <xref target="spake2"/>, inclusion of A and B in the transcript is optional depending
         on whether or not the identities are implicit.</t>
-
         <t>Upon completion of this protocol, A and B follow the same key derivation and confirmation
             steps as outlined in <xref target="spake2"/>.</t>
       </section>
     </section>
     <section title="Key Schedule and Key Confirmation" anchor="keys">
-        <t>The protocol transcript TT, as defined in Sections <xref target="spake2plus"/> and
+      <t>The protocol transcript TT, as defined in Sections <xref target="spake2plus"/> and
             <xref target="spake2"/>, is unique and secret to A and B. Both parties use TT to
             derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT). The length of each
             key is equal to half of the digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.</t>
-
-        <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
+      <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
             A and B compute them as KcA || KcB = KDF(nil, Ka, "ConfirmationKeys" || AAD), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
             The length of each of KcA and KcB is equal to half of the KDF output, e.g.,
             |KcA| = |KcB| = 128 bits for HKDF(SHA256).</t>
-
-        <t>The resulting key schedule for this protocol, given transcript TT and additional associated
+      <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
-
-        <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
         TT  -> Hash(TT) = Ka || Ke
         AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
-        ]]></artwork></figure>
-
-        <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
+        ]]></artwork>
+      </figure>
+      <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
             used for anything except key confirmation.</t>
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
-        <t>
+      <t>
             This section documents SPAKE2 and SPAKE2+ ciphersuite configurations. A ciphersuite
             indicates a group, cryptographic hash algorithm, and pair of KDF and MAC functions, e.g.,
             SPAKE2-P256-SHA256-HKDF-HMAC. This ciphersuite indicates a SPAKE2 protocol instance over
             P-256 that uses SHA256 along with HKDF <xref target="RFC5869"/> and HMAC <xref target="RFC2104"/>
             for G, Hash, KDF, and MAC functions, respectively.</t>
-
-            <texttable anchor="spake2_ciphersuites" title="SPAKE2(+) Ciphersuites">
-                <ttcol align="center">G</ttcol>
-                <ttcol align="center">Hash</ttcol>
-                <ttcol align="center">KDF</ttcol>
-                <ttcol align="center">MAC</ttcol>
-
-                <!-- P256-SHA256-HKDF-HMAC -->
-                <c>P-256</c>
-                <c>SHA256 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- P256-SHA512-HKDF-HMAC -->
-                <c>P-256</c>
-                <c>SHA512 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- P384-SHA256-HKDF-HMAC -->
-                <c>P-384</c>
-                <c>SHA256 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- P384-SHA512-HKDF-HMAC -->
-                <c>P-384</c>
-                <c>SHA512 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- P512-SHA512-HKDF-HMAC -->
-                <c>P-512</c>
-                <c>SHA512 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- edwards25519-SHA256-HKDF-HMAC -->
-                <c>edwards25519 <xref target="RFC7748"/></c>
-                <c>SHA256 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- edwards448-SHA512-HKDF-HMAC -->
-                <c>edwards448 <xref target="RFC7748"/></c>
-                <c>SHA512 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>HMAC <xref target="RFC2104"/></c>
-
-                <!-- P256-SHA256-HKDF-CMAC -->
-                <c>P-256</c>
-                <c>SHA256 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>CMAC-AES-128 <xref target="RFC4493"/></c>
-
-                <!-- P256-SHA512-HKDF-CMAC -->
-                <c>P-256</c>
-                <c>SHA512 <xref target="RFC6234"/></c>
-                <c>HKDF <xref target="RFC5869"/></c>
-                <c>CMAC-AES-128 <xref target="RFC4493"/></c>
-            </texttable>
-
-        <t>The following points represent permissible point generation seeds
+      <texttable anchor="spake2_ciphersuites" title="SPAKE2(+) Ciphersuites">
+        <ttcol align="center">G</ttcol>
+        <ttcol align="center">Hash</ttcol>
+        <ttcol align="center">KDF</ttcol>
+        <ttcol align="center">MAC</ttcol>
+        <!-- P256-SHA256-HKDF-HMAC -->
+        <c>P-256</c>
+        <c>SHA256 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- P256-SHA512-HKDF-HMAC -->
+        <c>P-256</c>
+        <c>SHA512 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- P384-SHA256-HKDF-HMAC -->
+        <c>P-384</c>
+        <c>SHA256 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- P384-SHA512-HKDF-HMAC -->
+        <c>P-384</c>
+        <c>SHA512 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- P512-SHA512-HKDF-HMAC -->
+        <c>P-512</c>
+        <c>SHA512 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- edwards25519-SHA256-HKDF-HMAC -->
+        <c>edwards25519 <xref target="RFC7748"/></c>
+        <c>SHA256 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- edwards448-SHA512-HKDF-HMAC -->
+        <c>edwards448 <xref target="RFC7748"/></c>
+        <c>SHA512 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>HMAC <xref target="RFC2104"/></c>
+        <!-- P256-SHA256-HKDF-CMAC -->
+        <c>P-256</c>
+        <c>SHA256 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>CMAC-AES-128 <xref target="RFC4493"/></c>
+        <!-- P256-SHA512-HKDF-CMAC -->
+        <c>P-256</c>
+        <c>SHA512 <xref target="RFC6234"/></c>
+        <c>HKDF <xref target="RFC5869"/></c>
+        <c>CMAC-AES-128 <xref target="RFC4493"/></c>
+      </texttable>
+      <t>The following points represent permissible point generation seeds
             for the groups listed in the Table <xref target="spake2_ciphersuites"/>,
             using the algorithm presented in <xref target="pointgen"/>.
             These bytestrings are compressed points as in <xref target="SEC1"/>
             for curves from <xref target="SEC1"/>.</t>
-
       <t>For P256:</t>
-
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 M =
 02886e2f97ace46e55ba9dd7242579f2993b64e16ef3dcab95afd497333d8fa12f
 seed: 1.2.840.10045.3.1.7 point generation seed (M)
@@ -332,11 +305,11 @@ seed: 1.2.840.10045.3.1.7 point generation seed (M)
 N =
 03d8bbd6c639c62937b04d997f38c3770719c629d7014d49a24b4f98baa1292b49
 seed: 1.2.840.10045.3.1.7 point generation seed (N)
-]]></artwork></figure>
-
+]]></artwork>
+      </figure>
       <t>For P384:</t>
-
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 M =
 030ff0895ae5ebf6187080a82d82b42e2765e3b2f8749c7e05eba366434b363d3dc
 36f15314739074d2eb8613fceec2853
@@ -346,11 +319,11 @@ N =
 02c72cf2e390853a1c1c4ad816a62fd15824f56078918f43f922ca21518f9c543bb
 252c5490214cf9aa3f0baab4b665c10
 seed: 1.3.132.0.34 point generation seed (N)
-]]></artwork></figure>
-
+]]></artwork>
+      </figure>
       <t>For P521:</t>
-
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 M =
 02003f06f38131b2ba2600791e82488e8d20ab889af753a41806c5db18d37d85608
 cfae06b82e4a72cd744c719193562a653ea1f119eef9356907edc9b56979962d7aa
@@ -360,10 +333,11 @@ N =
 0200c7924b9ec017f3094562894336a53c50167ba8c5963876880542bc669e494b25
 32d76c5b53dfb349fdf69154b9e0048c58a42e8ed04cef052a3bc349d95575cd25
 seed: 1.3.132.0.35 point generation seed (N)
-]]></artwork></figure>
-
+]]></artwork>
+      </figure>
       <t>For edwards25519:</t>
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 M =
 d048032c6ea0b6d697ddc2e86bda85a33adac920f1bf18e1b0c6d166a5cecdaf
 seed: edwards25519 point generation seed (M)
@@ -371,10 +345,11 @@ seed: edwards25519 point generation seed (M)
 N =
 d3bfb518f44f3430f29d0c92af503865a1ed3281dc69b35dd868ba85f886c4ab
 seed: edwards25519 point generation seed (N)
-]]></artwork></figure>
-
+]]></artwork>
+      </figure>
       <t>For edwards448:</t>
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 M =
 b6221038a775ecd007a4e4dde39fd76ae91d3cf0cc92be8f0c2fa6d6b66f9a12
 942f5a92646109152292464f3e63d354701c7848d9fc3b8880
@@ -384,31 +359,26 @@ N =
 6034c65b66e4cd7a49b0edec3e3c9ccc4588afd8cf324e29f0a84a072531c4db
 f97ff9af195ed714a689251f08f8e06e2d1f24a0ffc0146600
 seed: edwards448 point generation seed (N)
-]]></artwork></figure>
-
+]]></artwork>
+      </figure>
     </section>
     <section title="Security Considerations">
       <t>A security proof of SPAKE2 for prime order groups is found in <xref target="REF"/>.  Note that the choice of M and N is critical for the
         security proof.  The generation method specified in this document is
         designed to eliminate concerns related to knowing discrete logs of M
         and N.</t>
-
       <t>SPAKE2+ appears in <xref target="TDH"/> along with a path to a proof that
         server compromise does not lead to password compromise under the DH assumption
         (though the corresponding model excludes precomputation attacks).</t>
-
       <t>Elements received from a peer MUST be checked for group membership:
         failure to properly validate group elements can lead to attacks. Beyond the cofactor
         multiplication checks to ensure that these elements are in the prime order subgroup
         of G, it is essential that endpoints verify received points are members of G.</t>
-
       <t>The choices of random numbers MUST BE uniform. Randomly generated values (e.g., x and y)
           MUST NOT be reused; such reuse may permit dictionary attacks on the password.</t>
-
       <t>SPAKE2 does not support augmentation. As a result, the server has to
         store a password equivalent. This is considered a significant drawback,
         and so SPAKE2+ also appears in this document.</t>
-
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
@@ -425,18 +395,8 @@ seed: edwards448 point generation seed (N)
     </section>
   </middle>
   <back>
-    <references title="Normative References">
-      <reference anchor="SEC1">
-        <front>
-          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
-            Cryptography", version 2.0</title>
-          <author>
-            <organization>SEC</organization>
-          </author>
-          <date month="May" year="2009"/>
-        </front>
-        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf"/>
-      </reference>
+    <references title="Normative References"><reference anchor="SEC1"><front><title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
+            Cryptography", version 2.0</title><author><organization>SEC</organization></author><date month="May" year="2009"/></front><format type="PDF" target="http://www.sec.org/sec1-v2.pdf"/></reference>
       &RFC2104;
       &RFC2119;
       &RFC4493;
@@ -448,39 +408,19 @@ seed: edwards448 point generation seed (N)
       &RFC8032;
       &RFC8174;
     </references>
-    <references title="Informative References">
-      <reference anchor="REF">
-        <front>
-          <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
-          <author initials="M." surname="Abdalla"/>
-          <author initials="D." surname="Pointcheval"/>
-          <date month="Feb" year="2005"/>
-        </front>
-        <annotation>Appears in A. Menezes, editor. Topics in
+    <references title="Informative References"><reference anchor="REF"><front><title>Simple Password-Based Encrypted Key Exchange Protocols.</title><author initials="M." surname="Abdalla"/><author initials="D." surname="Pointcheval"/><date month="Feb" year="2005"/></front><annotation>Appears in A. Menezes, editor. Topics in
           Cryptography-CT-RSA 2005, Volume 3376 of Lecture Notes in Computer
           Science, pages 191-208, San Francisco, CA, US.  Springer-Verlag,
           Berlin, Germany.
-        </annotation>
-      </reference>
-      <reference anchor="TDH">
-        <front>
-          <title>The Twin-Diffie Hellman Problem and Applications</title>
-          <author initials="D." surname="Cash"/>
-          <author initials="E." surname="Kiltz"/>
-          <author initials="V." surname="Shoup"/>
-          <date year="2008"/>
-        </front>
-        <annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
+        </annotation></reference><reference anchor="TDH"><front><title>The Twin-Diffie Hellman Problem and Applications</title><author initials="D." surname="Cash"/><author initials="E." surname="Kiltz"/><author initials="V." surname="Shoup"/><date year="2008"/></front><annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
           Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
-        </annotation>
-      </reference>
+        </annotation></reference>
       &RFC8265;
       &uks;
     </references>
     <section anchor="pointgen" title="Algorithm used for Point Generation">
       <t>This section describes the algorithm that was used to generate
       the points (M) and (N) in the table in <xref target="Ciphersuites"/>.</t>
-
       <t>For each curve in the table below, we construct a string
       using the curve OID from <xref target="RFC5480"/> (as an ASCII
       string) or its name,
@@ -490,7 +430,6 @@ seed: edwards448 point generation seed (N)
       output again to generate the next 32 bytes, and so on.  This
       pattern is repeated for each group and value, with the string
       modified appropriately.</t>
-
       <t>A byte string of length equal to that of an encoded group
       element is constructed by concatenating as many blocks as are
       required, starting from the first block, and truncating to the
@@ -517,13 +456,12 @@ seed: edwards448 point generation seed (N)
       required for the curve, and checking if it is a valid point of the correct
       order, is repeated
       until a valid element is found.</t>
-
       <t>The following python snippet generates the above points,
       assuming an elliptic curve implementation following the
       interface of Edwards25519Point.stdbase() and
       Edwards448Point.stdbase() in Appendix A of <xref target="RFC8032"/>:</t>
-
-      <figure><artwork><![CDATA[
+      <figure>
+        <artwork><![CDATA[
 def iterated_hash(seed, n):
     h = seed
     for i in range(n):
@@ -553,9 +491,9 @@ def gen_point(seed, ecname, ec):
                 return pointstr, i
         except Exception:
             pass
-]]></artwork></figure>
+]]></artwork>
+      </figure>
     </section>
-
     <section anchor="testvectors" title="Test Vectors">
       <t>This section contains test vectors for SPAKE2 and SPAKE2+ using
         the P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted
@@ -564,9 +502,9 @@ def gen_point(seed, ecname, ec):
         prefix, specified in <xref target="SEC1"/> A and B identity strings
         are provided in the protocol invocation.
       </t>
-
       <section title="SPAKE2 Test Vectors">
-        <figure><artwork><![CDATA[
+        <figure>
+          <artwork><![CDATA[
 SPAKE2(A='client', B='server')
 w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
 e6
@@ -681,11 +619,12 @@ MAC(A) = 0x12fce7f0aecc1dba393a7e5612e6357becc5e3d07cd41ffd35c6d652f
 29cde60
 MAC(B) = 0xac36c6d186c3b824f4cfe099f035cf3aed4162d08886d32fa1806e5bf
 4015255
-    ]]></artwork></figure>
+    ]]></artwork>
+        </figure>
       </section>
-
       <section title="SPAKE2+ Test Vectors">
-<figure><artwork><![CDATA[
+        <figure>
+          <artwork><![CDATA[
 SPAKE2+(A='client', B='server')
 w0 = 0x4f9e28322a64f9dc7a01b282cc51e2abc4f9ed568805ca84f4ed3ef806516
 cf8
@@ -824,7 +763,8 @@ MAC(A) = 0x33e50d29f8eacc67bfdab4a6c46c88d75ac3308416c64dfbb0d7fb1c0
 feda5b0
 MAC(B) = 0x55434e5e501ad2d476aa1ae334ef27ba437a5dea87683defac575a63b
 548ca64
-]]></artwork></figure>
+]]></artwork>
+        </figure>
       </section>
     </section>
   </back>
