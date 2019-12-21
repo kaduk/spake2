@@ -12,6 +12,7 @@
 <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
 <!ENTITY uks SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
+<!ENTITY h2c SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-hash-to-curve-05.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -360,14 +361,15 @@ seed: edwards448 point generation seed (N)
 
        <t>Elements received from a peer MUST be checked for group
       membership: failure to properly validate group elements can lead
-      to attacks It is essential that endpoints verify received points
+      to attacks. It is essential that endpoints verify received points
       are members of G.</t>
 
       <t>The choices of random numbers MUST BE uniform. Randomly generated values (e.g., x and y)
           MUST NOT be reused; such reuse may permit dictionary attacks on the password.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server has to
-        store a password equivalent. This is considered a significant drawback.</t>
+        store a password equivalent. This is considered a significant drawback in
+        some use cases</t>
 
     </section>
     <section title="IANA Considerations">
@@ -385,29 +387,7 @@ seed: edwards448 point generation seed (N)
   </middle>
   <back>
     <references title="Normative References">
-      <reference anchor="h2c">
-	<front>
-          <title>Hashing To Elliptic Curves</title>
-	  <author initials="A" surname="Faz-Hernandez" />
-	  <author initials="S" surname = "Scott" />
-	  <author initials = "N" surname = "Sullivan" />
-	  <author initials = "R" surname = "Wahby" />
-	  <author initials = "C" surname = "Wood" />
-	  <date month = 'November' year = '2019'/>
-        </front>
-        <seriesInfo name = 'Work in Progress' value='draft-irtf-cfrg-hash-to-curve-05' />
-      </reference>
-      <reference anchor="SEC1">
-        <front>
-          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
-            Cryptography", version 2.0</title>
-          <author>
-            <organization>SEC</organization>
-          </author>
-          <date month="May" year="2009" />
-        </front>
-        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
-      </reference>
+      &h2c;
       &RFC2104;
       &RFC2119;
       &RFC4493;
