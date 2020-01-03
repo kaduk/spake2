@@ -12,7 +12,7 @@
 <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
 <!ENTITY uks SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
-<!ENTITY h2c SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-hash-to-curve-05.xml">
+<!ENTITY h2c SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-hash-to-curve.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -209,7 +209,7 @@
     <section title="Per-user M and N">
       <t>
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, a variant
-      based on using <ref target="h2c"/> is also presented. In this variant M=h2c(HASH(A, B, "M for SPAKE2"), N=h2c(HASH(A, B, "N for SPAKE2")).
+      based on using <xref target="I-D.irtf-cfrg-hash-to-curve"/> is also presented. In this variant M=h2c(HASH(A, B, "M for SPAKE2"), N=h2c(HASH(A, B, "N for SPAKE2")).
      </t>
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
@@ -424,6 +424,17 @@ seed: edwards448 point generation seed (N)
         <annotation>EUROCRYPT 2008.  Volume 4965 of Lecture notes in Computer
           Science, pages 127-145.  Springer-Verlag, Berlin, Germany.
         </annotation>
+      </reference>
+      <reference anchor="SEC1">
+        <front>
+          <title>STANDARDS FOR EFFICIENT CRYPTOGRAPHY, "SEC 1: Elliptic Curve
+            Cryptography", version 2.0</title>
+          <author>
+            <organization>SEC</organization>
+          </author>
+          <date month="May" year="2009" />
+        </front>
+        <format type="PDF" target="http://www.sec.org/sec1-v2.pdf" />
       </reference>
       &RFC8265;
       &uks;
