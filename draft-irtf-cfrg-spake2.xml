@@ -162,16 +162,33 @@
           the exchange. The transcript TT is encoded as follows:</t>
 
         <figure><artwork><![CDATA[
-	TT = len(A) || A || len(B) || B || len(S) || S 
-          || len(T) || T || len(K) || K || len(w) || w
+        TT = len(A) || A
+          || len(B) || B
+          || len(S) || S
+          || len(T) || T
+          || len(K) || K
+          || len(w) || w
         ]]></artwork></figure>
 
         <t>If an identity is absent, it is omitted from the transcript entirely. For example,
-          if both A and B are absent, then TT = len(S) || S || len(T) || T || len(K) || K || len(w) || w.
-          Likewise, if only A is absent, TT = len(B) || B || len(S) || S || len(T) || T || len(K) || K || len(w) || w.
-          This must only be done for applications in which identities are implicit. Otherwise,
-          the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
-          in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>.</t>
+          if both A and B are absent, then: 
+        <figure><artwork><![CDATA[
+        TT = len(S)  || S
+           || len(T) || T
+           || len(K) || K
+           || len(w) || w
+        ]]></artwork></figure>
+        Likewise, if only A is absent, then:
+        <figure><artwork><![CDATA[
+        TT = len(B)  || B
+           || len(S) || S
+           || len(T) || T
+           || len(K) || K
+           || len(w) || w
+        ]]></artwork></figure>
+        This must only be done for applications in which identities are implicit. Otherwise,
+        the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
+        in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>.</t>
 
         <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
             specified in <xref target="keys"/>. A MUST send B a key confirmation message
@@ -211,9 +228,9 @@
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, a variant
       based on using <xref target="I-D.irtf-cfrg-hash-to-curve"/> is also presented. In this variant, M and N are computed as follows:
         <figure><artwork><![CDATA[
-	M = h2c(Hash("M for SPAKE2" || len(A) || A || len(B) || B))
-	N = h2c(Hash("N for SPAKE2" || len(A) || A || len(B) || B))
-		]]></artwork></figure>
+        M = h2c(Hash("M for SPAKE2" || len(A) || A || len(B) || B))
+        N = h2c(Hash("N for SPAKE2" || len(A) || A || len(B) || B))
+                ]]></artwork></figure>
 		In addition M and N may be equal to have a symmetric variant. The security of these variants is examined in <xref target="MNVAR"/>.
      </t>
     </section>
