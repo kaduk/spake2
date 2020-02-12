@@ -157,7 +157,7 @@
         group. (Any text on abstract algebra explains this notion.)</t>
 
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
-          Both A and B must derive two shared secrets from K and the protocol transcript.
+          Both A and B must derive two shared secrets from the protocol transcript, including K.
           This prevents man-in-the-middle attackers from inserting themselves into
           the exchange. The transcript TT is encoded as follows:</t>
 
