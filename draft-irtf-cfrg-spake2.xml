@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
-<!ENTITY RFC2104 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2104.xml">
-<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
-<!ENTITY RFC4493 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4493.xml">
-<!ENTITY RFC5480 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5480.xml">
-<!ENTITY RFC5869 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5869.xml">
-<!ENTITY RFC6234 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6234.xml">
-<!ENTITY RFC7748 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7748.xml">
-<!ENTITY RFC7914 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7914.xml">
-<!ENTITY RFC8032 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8032.xml">
-<!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
-<!ENTITY RFC8265 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8265.xml">
-<!ENTITY uks SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
-<!ENTITY h2c SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-hash-to-curve-05.xml">
+<!ENTITY RFC2104 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2104.xml">
+<!ENTITY RFC2119 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC4493 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4493.xml">
+<!ENTITY RFC5480 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5480.xml">
+<!ENTITY RFC5869 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5869.xml">
+<!ENTITY RFC6234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6234.xml">
+<!ENTITY RFC7748 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7748.xml">
+<!ENTITY RFC7914 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7914.xml">
+<!ENTITY RFC8032 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8032.xml">
+<!ENTITY RFC8174 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
+<!ENTITY RFC8265 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8265.xml">
+<!ENTITY uks SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
+<!ENTITY h2c SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.draft-irtf-cfrg-hash-to-curve-05.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-09" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-10" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="October" year="2019"/>
+    <date month="February" year="2020"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
@@ -66,8 +66,8 @@
           h will be called the cofactor. Let I be the unit element in
           G, e.g., the point at infinity if G is an elliptic curve group. We denote the
           operations in the group additively. We assume there is a representation of
-          elements of G as byte strings: common choices would be SEC1
-          uncompressed or compressed <xref target="SEC1" /> for elliptic curve groups or big
+          elements of G as byte strings: common choices would be SEC1 <xref target="SEC1"/>
+          uncompressed or compressed for elliptic curve groups or big
           endian integers of a fixed (per-group) length for prime field DH.
           We fix two elements M and N in the prime-order subgroup of G as defined
           in the table in this document for common groups, as well as a generator P
@@ -94,7 +94,7 @@
           suitable for use with the protocols contained herein.</t>
 
         <t>Let A and B be two parties. A and B may also have digital
-          representations of the parties' identities such as Media Access Control addresses
+          representations of the parties&apos; identities such as Media Access Control addresses
           or other names (hostnames, usernames, etc). A and B may share Additional
           Authenticated Data (AAD) of length at most 2^16 - 1 bits that is separate
           from their identities which they may want to include in the protocol execution.
@@ -150,7 +150,7 @@
             Y=y*P, S=w*N+Y, then transmits pB=S to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it
-        as h*x*(S-wN), while B calculates it as h*y*(T-w*M). A knows S
+        as h*x*(S-w*N), while B calculates it as h*y*(T-w*M). A knows S
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
@@ -209,7 +209,7 @@
     <section title="Per-user M and N">
       <t>
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, a variant
-      based on using <ref target="h2c"/> is also presented. In this variant M=h2c(HASH(A, B, "M for SPAKE2"), N=h2c(HASH(A, B, "N for SPAKE2")).
+      based on using <xref target="I-D.irtf-cfrg-hash-to-curve"/> is also presented. In this variant M=h2c(HASH(A, B, "M for SPAKE2"), N=h2c(HASH(A, B, "N for SPAKE2")). In addition M and N may be equal to have a symmetric variant. The security of these variants is examined in <xref target="MNVAR"/>
      </t>
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
@@ -400,6 +400,24 @@ seed: edwards448 point generation seed (N)
       &RFC8174;
     </references>
     <references title="Informative References">
+      <reference anchor="SEC1">
+	<front>
+	  <title>SEC 1: Elliptic Curve Cryptography</title>
+	  <author>
+	    <organization> Standards for Efficient Cryptography Group</organization>
+	  </author>
+	  <date month="May" year="2009"/>
+	</front>
+      </reference>
+      <reference anchor="MNVAR">
+	<front>
+	  <title> Perfect Forward Security of SPAKE2</title>
+	  <author initials="M." surname="Abdalla"/>
+	  <author initials="M." surname="Barbosa"/>
+	  <date month="Oct" year="2019"/>
+	</front>
+	<annotation> IACR eprint 2019/1194</annotation>
+      </reference>
       <reference anchor="REF">
         <front>
           <title>Simple Password-Based Encrypted Key Exchange Protocols.</title>
