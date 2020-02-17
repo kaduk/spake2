@@ -154,10 +154,10 @@
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
-        group. (Any text on abstract algebra explains this notion.)</t>
+        group. This is a common mitigation against this kind of attack.</t>
 
         <t>K is a shared value, though it MUST NOT be used as a shared secret.
-          Both A and B must derive two shared secrets from the protocol transcript, including K.
+          Both A and B must derive two shared secrets from the protocol transcript.
           This prevents man-in-the-middle attackers from inserting themselves into
           the exchange. The transcript TT is encoded as follows:</t>
 
@@ -188,7 +188,7 @@
         ]]></artwork></figure>
         This must only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
-        in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>.</t>
+        in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>).</t>
 
         <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
             specified in <xref target="keys"/>. A MUST send B a key confirmation message
@@ -201,9 +201,9 @@
 
     </section>
     <section title="Key Schedule and Key Confirmation" anchor="keys">
-        <t>The protocol transcript TT, as defined in Section <xref target="spake2"/>, is unique and secret to A and B. Both parties use TT to
-            derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT). The length of each
-            key is equal to half of the digest output, e.g., |Ke| = |Ka| = 128 bits for SHA-256.</t>
+        <t>The protocol transcript TT, as defined in Section <xref target="spake2"/>, is unique and secret to A and B.
+            Both parties use TT to derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT), with |Ke| = |Ka|.
+            The length of each key is equal to half of the digest output, e.g., 128 bits for SHA-256.</t>
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
