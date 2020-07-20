@@ -171,22 +171,7 @@
           || len(w) || w
         ]]></artwork></figure>
 
-        <t>If an identity is absent, it is omitted from the transcript entirely. For example,
-          if both A and B are absent, then: 
-        <figure><artwork><![CDATA[
-        TT = len(S)  || S
-           || len(T) || T
-           || len(K) || K
-           || len(w) || w
-        ]]></artwork></figure>
-        Likewise, if only A is absent, then:
-        <figure><artwork><![CDATA[
-        TT = len(B)  || B
-           || len(S) || S
-           || len(T) || T
-           || len(K) || K
-           || len(w) || w
-        ]]></artwork></figure>
+        <t>If an identity is absent, it is encoded as a zero-length string.
         This must only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
         in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>).</t>
