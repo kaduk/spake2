@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-11" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-12" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
