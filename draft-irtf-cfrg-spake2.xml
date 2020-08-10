@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="June" year="2020"/>
+    <date month="August" year="2020"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
