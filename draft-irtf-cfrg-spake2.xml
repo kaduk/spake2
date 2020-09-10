@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-12" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-13" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="August" year="2020"/>
+    <date month="September" year="2020"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
@@ -62,7 +62,7 @@
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup" anchor="setup">
-        <t>Let G be a group in which the computational Diffie-Hellman (CDH)
+        <t>Let G be a group in which the gap Diffie-Hellman (CDH)
           problem is hard. Suppose G has order p*h where p is a large prime;
           h will be called the cofactor. Let I be the unit element in
           G, e.g., the point at infinity if G is an elliptic curve group. We denote the
@@ -361,11 +361,12 @@ seed: edwards448 point generation seed (N)
 
     </section>
     <section title="Security Considerations">
-      <t>A security proof of SPAKE2 for prime order groups is found in <xref
-          target="REF" />.  Note that the choice of M and N is critical for the
-        security proof.  The generation method specified in this document is
-        designed to eliminate concerns related to knowing discrete logs of M
-        and N.</t>
+      <t>A security proof of SPAKE2 for prime order groups is found in
+      <xref target="REF" />, reducing the security of SPAKE2 to the
+      gap Diffie-Hellman assumption.  Note that the choice of M and N
+      is critical for the security proof.  The generation methods
+      specified in this document is designed to eliminate concerns
+      related to knowing discrete logs of M and N.</t>
 
        <t>Elements received from a peer MUST be checked for group
       membership: failure to properly validate group elements can lead
