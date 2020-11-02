@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-13" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-14" submissionType="IETF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="September" year="2020"/>
+    <date month="November" year="2020"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
@@ -217,7 +217,7 @@
     M = h2c(Hash("M for SPAKE2" || len(A) || A || len(B) || B))
     N = h2c(Hash("N for SPAKE2" || len(A) || A || len(B) || B))
                 ]]></artwork></figure>
-		In addition M and N may be equal to have a symmetric variant. The security of these variants is examined in <xref target="MNVAR"/>.
+		In addition M and N may be equal to have a symmetric variant. The security of these variants is examined in <xref target="MNVAR"/>. This variant may not be suitable for protocols that require the messages to be exchanged symmetrically and do not know the exact identity of the parties before the flow begins.
      </t>
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
@@ -373,12 +373,17 @@ seed: edwards448 point generation seed (N)
       to attacks. It is essential that endpoints verify received points
       are members of G.</t>
 
-      <t>The choices of random numbers MUST BE uniform. Randomly generated values (e.g., x and y)
-          MUST NOT be reused; such reuse may permit dictionary attacks on the password.</t>
+      <t>The choices of random numbers MUST BE uniform. Randomly
+      generated values (e.g., x and y) MUST NOT be reused; such reuse
+      may permit dictionary attacks on the password. To generate these
+      uniform numbers rejection sampling is recommended. Some
+      implementations of elliptic curve multiplication may leak information
+      about the length of the scalar: these MUST NOT be used.
+      </t>
 
-      <t>SPAKE2 does not support augmentation. As a result, the server has to
-        store a password equivalent. This is considered a significant drawback in
-        some use cases</t>
+      <t>SPAKE2 does not support augmentation. As a result, the server
+      has to store a password equivalent. This is considered a
+      significant drawback in some use cases.</t>
 
     </section>
     <section title="IANA Considerations">
@@ -420,12 +425,18 @@ seed: edwards448 point generation seed (N)
       </reference>
       <reference anchor="MNVAR">
 	<front>
-	  <title> Perfect Forward Security of SPAKE2</title>
+	  <title> Universally Composable Relaxed Password Authentication</title>
 	  <author initials="M." surname="Abdalla"/>
 	  <author initials="M." surname="Barbosa"/>
-	  <date month="Oct" year="2019"/>
+	  <author initials="T." surname="Bradley"/>
+	  <author initials="S." surname="Jarecki"/>
+	  <author initials="J." surname="Katz"/>
+	  <author initials="J." surname="Xu"/>
+	  <date month="August" year="2020"/>
 	</front>
-	<annotation> IACR eprint 2019/1194</annotation>
+	<annotation> Appears in Micciancio D., Ristenpart T. (eds)
+	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lectur
+	notes in Computer Science volume 12170. Springer.</annotation>
       </reference>
       <reference anchor="REF">
         <front>
