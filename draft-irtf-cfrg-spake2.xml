@@ -171,6 +171,8 @@
           || len(w) || w
         ]]></artwork></figure>
 
+        <t> Here w is encoded as a big endian number padded to the length of p. This representation
+        prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.</t>
         <t>If an identity is absent, it is encoded as a zero-length string.
         This must only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
@@ -202,7 +204,7 @@
             data AAD, is as follows.</t>
 
         <figure><artwork><![CDATA[
-    TT  -> Hash(TT) = Ka || Ke
+    TT  -> Hash(TT) = Ke || Ka
     AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
         ]]></artwork></figure>
 
@@ -365,7 +367,7 @@ seed: edwards448 point generation seed (N)
       <xref target="REF" />, reducing the security of SPAKE2 to the
       gap Diffie-Hellman assumption.  Note that the choice of M and N
       is critical for the security proof.  The generation methods
-      specified in this document is designed to eliminate concerns
+      specified in this document are designed to eliminate concerns
       related to knowing discrete logs of M and N.</t>
 
        <t>Elements received from a peer MUST be checked for group
@@ -390,13 +392,14 @@ seed: edwards448 point generation seed (N)
       <t>No IANA action is required.</t>
     </section>
     <section title="Acknowledgments">
-      <t>Special thanks to Nathaniel McCallum and Greg Hudson
-        for generation of test vectors.
-        Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
-        Hudson also suggested the addition of warnings on the reuse of x and y. Thanks
-        to Fedor Brunner, Adam Langley, and the members of the CFRG for
-        comments and advice. Chris Wood contributed substantial text and reformatting
-        to address the excellent review comments from Kenny Paterson.</t>
+      <t>Special thanks to Nathaniel McCallum and Greg Hudson for
+      generation of M and N, and Cris Wood for test vectors.  Thanks
+      to Mike Hamburg for advice on how to deal with cofactors. Greg
+      Hudson also suggested the addition of warnings on the reuse of x
+      and y. Thanks to Fedor Brunner, Adam Langley, and the members of
+      the CFRG for comments and advice. Chris Wood contributed
+      substantial text and reformatting to address the excellent
+      review comments from Kenny Paterson.</t>
     </section>
   </middle>
   <back>
@@ -435,7 +438,7 @@ seed: edwards448 point generation seed (N)
 	  <date month="August" year="2020"/>
 	</front>
 	<annotation> Appears in Micciancio D., Ristenpart T. (eds)
-	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lectur
+	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lecture
 	notes in Computer Science volume 12170. Springer.</annotation>
       </reference>
       <reference anchor="REF">
@@ -548,7 +551,7 @@ def gen_point(seed, ecname, ec):
     <section anchor="testvectors" title="Test Vectors">
       <t>This section contains test vectors for SPAKE2 using 
         the P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted
-        and values for w and w0,w1 are provided directly.) All points are 
+        and values for w,x and y are provided directly.) All points are 
         encoded using the uncompressed format, i.e., with a 0x04 octet
         prefix, specified in <xref target="SEC1"/> A and B identity strings
         are provided in the protocol invocation.
