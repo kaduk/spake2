@@ -145,13 +145,13 @@
 
       <section title="SPAKE2" anchor="spake2">
         <t>To begin, A picks x randomly and uniformly from the integers in [0,p),
-            and calculates X=x*P and T=w*M+X, then transmits pA=T to B.</t>
+            and calculates X=x*P and S=w*M+X, then transmits pA=S to B.</t>
 
         <t>B selects y randomly and uniformly from the integers in [0,p), and calculates
-            Y=y*P, S=w*N+Y, then transmits pB=S to A.</t>
+            Y=y*P, T=w*N+Y, then transmits pB=T to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it
-        as h*x*(S-w*N), while B calculates it as h*y*(T-w*M). A knows S
+        as h*x*(T-w*N), while B calculates it as h*y*(S-w*M). A knows S
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
@@ -172,7 +172,8 @@
         ]]></artwork></figure>
 
         <t> Here w is encoded as a big endian number padded to the length of p. This representation
-        prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.</t>
+        prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.
+	We include it for consistency.</t>
         <t>If an identity is absent, it is encoded as a zero-length string.
         This must only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
