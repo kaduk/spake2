@@ -175,7 +175,7 @@
         prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.
 	We include it for consistency.</t>
         <t>If an identity is absent, it is encoded as a zero-length string.
-        This must only be done for applications in which identities are implicit. Otherwise,
+        This MUST only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
         in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>).</t>
 
@@ -580,6 +580,12 @@ cd65f410000000000000004e896fa87681d37fe9c3e68e9fa406265e63dd0b1b812c80
 e115e0e7ce0200000000000000019eed1f4855a0b7e22096a04936c217a5f0cfe480ae
 626b9d4427dce9373b3f3
 Hash(TT)=c5a9dc83de36d046a9387274344ba6b9d9ff320226b3b698f27d67c5dd563459
+Ke = 0xc5a9dc83de36d046a9387274344ba6b9
+Ka = 0xd9ff320226b3b698f27d67c5dd56
+KcA = 0x94902da13b202b647bd97486653e2145
+KcB = 0x404433f5a0a01ce4a8a8b42a41a8a853
+A conf = 0xd4bf4f3a13416096b2be325bbe5e31fe277c1733078beb768a830d2df5abf0b5
+B conf = 0x2e4841b5353d1c27625c6b94bda481a8f453bcceb51ca6455d661675a751ed0d
 
 spake2: A='', B='client'
 w = 0x1af09ee09d36e14781d6af24e17eb927141148dab79d749f6a15a37cbcaebb49
@@ -601,6 +607,12 @@ ddf8555d1e957ef2e314780edc92ff8827f89248a16941265f21752cd9330526b86b72
 0000000000000001af09ee09d36e14781d6af24e17eb927141148dab79d749f6a15a37
 cbcaebb49
 Hash(TT)=22d594d6cd6016646fe76a4a2f0a908b90f83701e4962aed6095abd1c72a87ac
+Ka = 0x90f83701e4962aed6095abd1c72a
+KcA = 0xdaa3b64d68d1aeaa7ca138bdf4df44d1
+KcB = 0x13606e2849fc3aedb009da164af6650e
+A conf = 0xd5dff21e4d2df66b1ccf0589aece62f8dc4100e0113ecef666083b4be8aa521a
+B conf = 0x6bb1db855aaf7bb565255cd4d830867d3db1fd6b75147953c59e5b8d94aab96a
+
 
 spake2: A='server', B=''
 w = 0x2a7ae95677292de1b1c3e073d4f446cafc49686a1ac15be4c4a7f7ff68be7eb4
@@ -622,6 +634,11 @@ TT = 0x06000000000000007365727665720000000000000000410000000000000004d
 0000000000000002a7ae95677292de1b1c3e073d4f446cafc49686a1ac15be4c4a7f7f
 f68be7eb4
 Hash(TT)=178508e1cec7e951bfa06584c2912e5ca722d894e0c0a00ef36d1531f1bdcd6a
+Ka = 0xa722d894e0c0a00ef36d1531f1bd
+KcA = 0x92e30a69434569c7f62bc33241458abd
+KcB = 0x4aae21b4ba3afc536b711730663f7be2
+A conf = 0x94cc7422f19c21110a272e5ba28218d672779dd8f84c758346364611eaa5a595
+B conf = 0xc3ef73a0073b67347678da7eacbf34bfbb15e33e7277b35f915ece0c8e6a8382
 
 spake2: A='', B=''
 w = 0x94b84fe32e2a40b3cacaaf0654f315f4b59b327fe7a5f2377e4c8eeaf704bb22
@@ -642,6 +659,12 @@ f5129244237f0b2d9f365bfee3d5af1d39eee85cfbe50b6f03fd2c6fc5fef4d039a2c2
 9e686f2d0707fb29c88986f0d1e31f8b320f723fe2fef4e5681f203702000000000000
 00094b84fe32e2a40b3cacaaf0654f315f4b59b327fe7a5f2377e4c8eeaf704bb22
 Hash(TT)= 3d9463ed0efada5fdab08d5c99bc80770b4098396c542ce89c0d2a7a08b83ae5
+Ka = 0x0b4098396c542ce89c0d2a7a08b8
+KcA = 0xa03095d310e975f0e2301a41f1b0e358
+KcB = 0x4576319b6aacfdbf2ead7ce42f63f513
+A conf = 0x5dc0efae13f0d5418c3bf56dd04ea15d9bc0a3aa86e85119dbf7cdc63609c6ee
+B conf = 0x370bf83e684366223ed33d43dd8b9b605cf8a309c6ab97af8cb2451d94aa08fb
+
     ]]></artwork></figure>
       </section>
     </section>
