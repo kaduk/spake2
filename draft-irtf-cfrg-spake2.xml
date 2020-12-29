@@ -81,18 +81,21 @@
           endian number. Finally, let nil represent an empty string, i.e.,
           len(nil) = 0.</t>
 
-        <t>KDF is a key-derivation function that takes as input a salt, intermediate
-          keying material (IKM), info string, and derived key length L to derive a
-          cryptographic key of length L. MAC is a Message
-          Authentication Code algorithm that takes a secret key and
-          message as input to produce an output. Let Hash be a hash function from
-          arbitrary strings to bit strings of a fixed length. Common choices
-          for H are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a memory-hard
-          hash function designed to slow down brute-force attackers. Scrypt <xref target="RFC7914"/>
-          is a common example of this function. The output length of MHF matches that
-          of Hash. Parameter selection for MHF is out of scope for this document.
-          <xref target="Ciphersuites"/> specifies variants of KDF, MAC, and Hash
-          suitable for use with the protocols contained herein.</t>
+        <t>KDF(ikm, salt, info) is a key-derivation function that
+          takes as input a salt, intermediate keying material (IKM),
+          info string, and derived key length L to derive a
+          cryptographic key of length L. MAC is a Message Authentication
+          Code algorithm that takes a secret key and message as input to
+          produce an output. Let Hash be a hash function from arbitrary
+        strings to bit strings of a fixed length. Common choices for H
+        are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a
+        memory-hard hash function designed to slow down brute-force
+        attackers. Scrypt <xref target="RFC7914"/> is a common example
+        of this function. The output length of MHF matches that of
+        Hash. Parameter selection for MHF is out of scope for this
+        document.  <xref target="Ciphersuites"/> specifies variants of
+        KDF, MAC, and Hash suitable for use with the protocols
+        contained herein.</t>
 
         <t>Let A and B be two parties. A and B may also have digital
           representations of the parties&apos; identities such as Media Access Control addresses
@@ -196,10 +199,10 @@
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
-            A and B compute them as KcA || KcB = KDF(nil, Ka, "ConfirmationKeys" || AAD), where AAD
+            A and B compute them as KcA || KcB = KDF(Ka,nil, "ConfirmationKeys" || AAD), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
-            The length of each of KcA and KcB is equal to half of the KDF output, e.g.,
-            |KcA| = |KcB| = 128 bits for HKDF(SHA256).</t>
+            The length of each of KcA and KcB is equal to half of the underlying hash  output length, e.g.,
+            |KcA| = |KcB| = 128 bits for HKDF(SHA256). </t>
 
         <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
@@ -388,6 +391,11 @@ seed: edwards448 point generation seed (N)
       has to store a password equivalent. This is considered a
       significant drawback in some use cases.</t>
 
+      <t> The HMAC keys in this document are shorter than recommended
+      in <xref target="RFC8032" />. This is appropriate as the
+      difficulty of the discrete logarithm problem is comparable with
+      the difficulty of brute forcing the keys. </t>
+
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
@@ -397,10 +405,11 @@ seed: edwards448 point generation seed (N)
       generation of M and N, and Cris Wood for test vectors.  Thanks
       to Mike Hamburg for advice on how to deal with cofactors. Greg
       Hudson also suggested the addition of warnings on the reuse of x
-      and y. Thanks to Fedor Brunner, Adam Langley, and the members of
-      the CFRG for comments and advice. Chris Wood contributed
-      substantial text and reformatting to address the excellent
-      review comments from Kenny Paterson.</t>
+      and y. Thanks to Fedor Brunner, Adam Langley,Liliya
+      Akhmetzyanova, and the members of the CFRG for comments and
+      advice. Chris Wood contributed substantial text and reformatting
+      to address the excellent review comments from Kenny
+      Paterson. </t>
     </section>
   </middle>
   <back>
