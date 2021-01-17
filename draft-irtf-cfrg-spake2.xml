@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-17" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-18" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -32,6 +32,9 @@
       </address>
     </author>
     <date month="January" year="2021"/>
+    <workgroup>
+      Internet Research Task Force
+    </workgroup>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
