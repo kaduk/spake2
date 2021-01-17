@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-16" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-17" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,14 +31,15 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="December" year="2020"/>
+    <date month="January" year="2021"/>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
       no risk of disclosing the password. This method is compatible
-      with any group, is computationally efficient, and
-      SPAKE2 has a security proof. This document predated the CFRG PAKE competition
-      and it was not selected.</t>
+      with any group, is computationally efficient, and SPAKE2 has a
+      security proof. This document predated the CFRG PAKE competition
+      and it was not selected. This document is a product of the
+      Crypto Forum Research Group (CFRG) in the IRTF.</t>
     </abstract>
   </front>
   <middle>
@@ -50,7 +51,7 @@
         to a random group element), is
         computationally efficient, and has a security proof.
         Predetermined parameters for a selection of commonly used groups are
-        also provided for use by other protocols.</t>
+        also provided for use by other protocols.This document represents the consensus of the Crypto Forum Research Group (CFRG).</t>
     </section>
     <section anchor="notation" title="Requirements Notation">
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
@@ -407,8 +408,11 @@ seed: edwards448 point generation seed (N)
       Hudson also suggested the addition of warnings on the reuse of x
       and y. Thanks to Fedor Brunner, Adam Langley,Liliya
       Akhmetzyanova, and the members of the CFRG for comments and
-      advice. Chris Wood contributed substantial text and reformatting
-      to address the excellent review comments from Kenny
+      advice. Thanks to Scott Fluhrer and those Crypto Panel experts
+      involved in the PAKE selection process
+      (https://github.com/cfrg/pake-selection) who have provided
+      valuable comments. Chris Wood contributed substantial text and
+      reformatting to address the excellent review comments from Kenny
       Paterson. </t>
     </section>
   </middle>
