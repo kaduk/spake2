@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-14" submissionType="IETF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-18" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,14 +31,18 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="November" year="2020"/>
+    <date month="January" year="2021"/>
+    <workgroup>
+      Internet Research Task Force
+    </workgroup>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
       parties that share a password to derive a strong shared key with
       no risk of disclosing the password. This method is compatible
-      with any group, is computationally efficient, and
-      SPAKE2 has a security proof. This document predated the CFRG PAKE competition
-      and it was not selected.</t>
+      with any group, is computationally efficient, and SPAKE2 has a
+      security proof. This document predated the CFRG PAKE competition
+      and it was not selected. This document is a product of the
+      Crypto Forum Research Group (CFRG) in the IRTF.</t>
     </abstract>
   </front>
   <middle>
@@ -50,7 +54,7 @@
         to a random group element), is
         computationally efficient, and has a security proof.
         Predetermined parameters for a selection of commonly used groups are
-        also provided for use by other protocols.</t>
+        also provided for use by other protocols.This document represents the consensus of the Crypto Forum Research Group (CFRG).</t>
     </section>
     <section anchor="notation" title="Requirements Notation">
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
@@ -81,18 +85,21 @@
           endian number. Finally, let nil represent an empty string, i.e.,
           len(nil) = 0.</t>
 
-        <t>KDF is a key-derivation function that takes as input a salt, intermediate
-          keying material (IKM), info string, and derived key length L to derive a
-          cryptographic key of length L. MAC is a Message
-          Authentication Code algorithm that takes a secret key and
-          message as input to produce an output. Let Hash be a hash function from
-          arbitrary strings to bit strings of a fixed length. Common choices
-          for H are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a memory-hard
-          hash function designed to slow down brute-force attackers. Scrypt <xref target="RFC7914"/>
-          is a common example of this function. The output length of MHF matches that
-          of Hash. Parameter selection for MHF is out of scope for this document.
-          <xref target="Ciphersuites"/> specifies variants of KDF, MAC, and Hash
-          suitable for use with the protocols contained herein.</t>
+        <t>KDF(ikm, salt, info) is a key-derivation function that
+          takes as input a salt, intermediate keying material (IKM),
+          info string, and derived key length L to derive a
+          cryptographic key of length L. MAC is a Message Authentication
+          Code algorithm that takes a secret key and message as input to
+          produce an output. Let Hash be a hash function from arbitrary
+        strings to bit strings of a fixed length. Common choices for H
+        are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a
+        memory-hard hash function designed to slow down brute-force
+        attackers. Scrypt <xref target="RFC7914"/> is a common example
+        of this function. The output length of MHF matches that of
+        Hash. Parameter selection for MHF is out of scope for this
+        document.  <xref target="Ciphersuites"/> specifies variants of
+        KDF, MAC, and Hash suitable for use with the protocols
+        contained herein.</t>
 
         <t>Let A and B be two parties. A and B may also have digital
           representations of the parties&apos; identities such as Media Access Control addresses
@@ -145,13 +152,13 @@
 
       <section title="SPAKE2" anchor="spake2">
         <t>To begin, A picks x randomly and uniformly from the integers in [0,p),
-            and calculates X=x*P and T=w*M+X, then transmits pA=T to B.</t>
+            and calculates X=x*P and S=w*M+X, then transmits pA=S to B.</t>
 
         <t>B selects y randomly and uniformly from the integers in [0,p), and calculates
-            Y=y*P, S=w*N+Y, then transmits pB=S to A.</t>
+            Y=y*P, T=w*N+Y, then transmits pB=T to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it
-        as h*x*(S-w*N), while B calculates it as h*y*(T-w*M). A knows S
+        as h*x*(T-w*N), while B calculates it as h*y*(S-w*M). A knows S
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
@@ -171,8 +178,11 @@
           || len(w) || w
         ]]></artwork></figure>
 
+        <t> Here w is encoded as a big endian number padded to the length of p. This representation
+        prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.
+	We include it for consistency.</t>
         <t>If an identity is absent, it is encoded as a zero-length string.
-        This must only be done for applications in which identities are implicit. Otherwise,
+        This MUST only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
         in a specific protocol is given in <xref target="I-D.ietf-mmusic-sdp-uks"/>).</t>
 
@@ -193,16 +203,16 @@
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
-            A and B compute them as KcA || KcB = KDF(nil, Ka, "ConfirmationKeys" || AAD), where AAD
+            A and B compute them as KcA || KcB = KDF(Ka,nil, "ConfirmationKeys" || AAD), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
-            The length of each of KcA and KcB is equal to half of the KDF output, e.g.,
-            |KcA| = |KcB| = 128 bits for HKDF(SHA256).</t>
+            The length of each of KcA and KcB is equal to half of the underlying hash  output length, e.g.,
+            |KcA| = |KcB| = 128 bits for HKDF(SHA256). </t>
 
         <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
 
         <figure><artwork><![CDATA[
-    TT  -> Hash(TT) = Ka || Ke
+    TT  -> Hash(TT) = Ke || Ka
     AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
         ]]></artwork></figure>
 
@@ -365,7 +375,7 @@ seed: edwards448 point generation seed (N)
       <xref target="REF" />, reducing the security of SPAKE2 to the
       gap Diffie-Hellman assumption.  Note that the choice of M and N
       is critical for the security proof.  The generation methods
-      specified in this document is designed to eliminate concerns
+      specified in this document are designed to eliminate concerns
       related to knowing discrete logs of M and N.</t>
 
        <t>Elements received from a peer MUST be checked for group
@@ -385,18 +395,28 @@ seed: edwards448 point generation seed (N)
       has to store a password equivalent. This is considered a
       significant drawback in some use cases.</t>
 
+      <t> The HMAC keys in this document are shorter than recommended
+      in <xref target="RFC8032" />. This is appropriate as the
+      difficulty of the discrete logarithm problem is comparable with
+      the difficulty of brute forcing the keys. </t>
+
     </section>
     <section title="IANA Considerations">
       <t>No IANA action is required.</t>
     </section>
     <section title="Acknowledgments">
-      <t>Special thanks to Nathaniel McCallum and Greg Hudson
-        for generation of test vectors.
-        Thanks to Mike Hamburg for advice on how to deal with cofactors. Greg
-        Hudson also suggested the addition of warnings on the reuse of x and y. Thanks
-        to Fedor Brunner, Adam Langley, and the members of the CFRG for
-        comments and advice. Chris Wood contributed substantial text and reformatting
-        to address the excellent review comments from Kenny Paterson.</t>
+      <t>Special thanks to Nathaniel McCallum and Greg Hudson for
+      generation of M and N, and Cris Wood for test vectors.  Thanks
+      to Mike Hamburg for advice on how to deal with cofactors. Greg
+      Hudson also suggested the addition of warnings on the reuse of x
+      and y. Thanks to Fedor Brunner, Adam Langley,Liliya
+      Akhmetzyanova, and the members of the CFRG for comments and
+      advice. Thanks to Scott Fluhrer and those Crypto Panel experts
+      involved in the PAKE selection process
+      (https://github.com/cfrg/pake-selection) who have provided
+      valuable comments. Chris Wood contributed substantial text and
+      reformatting to address the excellent review comments from Kenny
+      Paterson. </t>
     </section>
   </middle>
   <back>
@@ -435,7 +455,7 @@ seed: edwards448 point generation seed (N)
 	  <date month="August" year="2020"/>
 	</front>
 	<annotation> Appears in Micciancio D., Ristenpart T. (eds)
-	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lectur
+	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lecture
 	notes in Computer Science volume 12170. Springer.</annotation>
       </reference>
       <reference anchor="REF">
@@ -548,7 +568,7 @@ def gen_point(seed, ecname, ec):
     <section anchor="testvectors" title="Test Vectors">
       <t>This section contains test vectors for SPAKE2 using 
         the P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted
-        and values for w and w0,w1 are provided directly.) All points are 
+        and values for w,x and y are provided directly.) All points are 
         encoded using the uncompressed format, i.e., with a 0x04 octet
         prefix, specified in <xref target="SEC1"/> A and B identity strings
         are provided in the protocol invocation.
@@ -556,120 +576,110 @@ def gen_point(seed, ecname, ec):
 
       <section title="SPAKE2 Test Vectors">
         <figure><artwork><![CDATA[
-SPAKE2(A='client', B='server') 
-w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
-X = 0x04ac6827b3a9110d1e663bcd4f5de668da34a9f45e464e99067bbea53f1ed4
-d8abbdd234c05b3a3a8a778ee47f244cca1a79acb7052d5e58530311a9af077ba179
-T = 0x04e02acfbbfb081fc38b5bab999b5e25a5ffd0b1ac48eae24fcc8e49ac5e0d
-8a790914419a100e205605f9862daa848e99cea455263f0c6e06bc5a911f3e10a16b
-Y = 0x0413c45ab093a75c4b2a6e71f957eec3859807858325258b0fa43df5a6efd2
-63c59b9c1fbfd55bc5e75fd3e7ba8af6799a99b225fe6c30e6c2a2e0ab4962136ba8
-S = 0x047aad50ba7bd6a5eacbead7689f7146f1a4219fa071cce1755f80280cc6c3
-a5a73cf469f2a294a0b74a5c07054585ccd447f3f633d8631f3bf43442449e9efeba
-TT = 0x0600000000000000636c69656e74060000000000000073657276657241000
-00000000000047aad50ba7bd6a5eacbead7689f7146f1a4219fa071cce1755f80280
-cc6c3a5a73cf469f2a294a0b74a5c07054585ccd447f3f633d8631f3bf43442449e9
-efeba410000000000000004e02acfbbfb081fc38b5bab999b5e25a5ffd0b1ac48eae
-24fcc8e49ac5e0d8a790914419a100e205605f9862daa848e99cea455263f0c6e06b
-c5a911f3e10a16b410000000000000004d01fc08bbae9b6abe2f4d6893cc9f810433
-2e19be5f5881c6b9f077e1feff55023da74db65fae320fad8f0dd38e1323f5336f3f
-53c9c9dec06710f18f556bd2020000000000000007741cf8c80b9bee583abac3d38d
-aa6b807fed38b06580cb75ee85319d25fede6 
-Ka = 0x2b5e350c58d530c3586f75bf2a155c4b 
-Ke = 0x238509f7adf0dc72500b2d1315737a27 
-KcA = 0xc33d2ef8e37a7e545c14c7fcfdc9db94 
-KcB = 0x18a81cec7eb83416db6615cb3bc03fcb 
-MAC(A) = 0x29e9a63d243f2f0db5532d2eb0dbaa617803b85feb31566d0cb9457e3
-03bcfa6 
-MAC(B) = 0x487e4cbe98b6287272d043e169a19b6c4682d0481c92f53f1ee03d4b8
-6c3f43e 
+spake2: A='server', B='client'
+w = 0x2ee57912099d31560b3a44b1184b9b4866e904c49d12ac5042c97dca461b1a5f
+x = 0x43dd0fd7215bdcb482879fca3220c6a968e66d70b1356cac18bb26c84a78d729
+S = 0x04a56fa807caaa53a4d28dbb9853b9815c61a411118a6fe516a8798434751470
+f9010153ac33d0d5f2047ffdb1a3e42c9b4e6be662766e1eeb4116988ede5f912c 
+y = 0xdcb60106f276b02606d8ef0a328c02e4b629f84f89786af5befb0bc75b6e66be
+T = 0x0406557e482bd03097ad0cbaa5df82115460d951e3451962f1eaf4367a420676
+d09857ccbc522686c83d1852abfa8ed6e4a1155cf8f1543ceca528afb591a1e0b7 
+K = 0x0412af7e89717850671913e6b469ace67bd90a4df8ce45c2af19010175e37eed
+69f75897996d539356e2fa6a406d528501f907e04d97515fbe83db277b715d3325 
+TT = 0x06000000000000007365727665720600000000000000636c69656e744100000
+00000000004a56fa807caaa53a4d28dbb9853b9815c61a411118a6fe516a8798434751
+470f9010153ac33d0d5f2047ffdb1a3e42c9b4e6be662766e1eeb4116988ede5f912c4
+1000000000000000406557e482bd03097ad0cbaa5df82115460d951e3451962f1eaf43
+67a420676d09857ccbc522686c83d1852abfa8ed6e4a1155cf8f1543ceca528afb591a
+1e0b741000000000000000412af7e89717850671913e6b469ace67bd90a4df8ce45c2a
+f19010175e37eed69f75897996d539356e2fa6a406d528501f907e04d97515fbe83db2
+77b715d332520000000000000002ee57912099d31560b3a44b1184b9b4866e904c49d1
+2ac5042c97dca461b1a5f
+Hash(TT) = 0x0e0672dc86f8e45565d338b0540abe6915bdf72e2b35b5c9e5663168e960a91bKe = 0x0e0672dc86f8e45565d338b0540abe69
+Ka = 0x15bdf72e2b35b5c9e5663168e960a91b
+KcA = 0x00c12546835755c86d8c0db7851ae86f
+KcB = 0xa9fa3406c3b781b93d804485430ca27a
+A conf = 0x58ad4aa88e0b60d5061eb6b5dd93e80d9c4f00d127c65b3b35b1b5281fee38f0
+B conf = 0xd3e2e547f1ae04f2dbdbf0fc4b79f8ecff2dff314b5d32fe9fcef2fb26dc459b
 
-SPAKE2(A='client', B='') 
-w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
-X = 0x048b5d7b44b02c4c868f4486ec55bd2380ec34cd5fa5dbff1079a79097e305
-0b34fa91272331729357c86cbb30d371e252dc915aeaa314921b1f09f74816f96a12
-T = 0x04839f44931b88d12769e601d0ec480b6c9ea95e70ba361ba14bf513e5186a
-6c302e6f409bd01f1030ad3cdac1e08965217e430ca7f9bce698111ae8a4d0530efd
-Y = 0x0446419d63037d0bbaca224f89987c776bfea2e0913ccda0790079212f476d
-6fd1ec997a02821a804f885e4f29b172b27c92251d883efe201cae106c239108c0c7
-S = 0x042926b2dbcc5d0cb23ca123cc4133242f2998439af5380434a4bd5fd76fbb
-c030b5563218d0184fa3fd303482a679c9555ccea41098b26b6ee16fe35c792b1fda
-TT = 0x0600000000000000636c69656e744100000000000000042926b2dbcc5d0cb
-23ca123cc4133242f2998439af5380434a4bd5fd76fbbc030b5563218d0184fa3fd3
-03482a679c9555ccea41098b26b6ee16fe35c792b1fda410000000000000004839f4
-4931b88d12769e601d0ec480b6c9ea95e70ba361ba14bf513e5186a6c302e6f409bd
-01f1030ad3cdac1e08965217e430ca7f9bce698111ae8a4d0530efd4100000000000
-000041d9e3c88db68247ab50264a6090e2e524bda3049dbc53c4df708e37bd76913b
-8cf5954c4d0f835331f185fef4ff1c6115cf0eb8ce27e8224bf5f76c75b182308200
-00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-9d25fede6 
-Ka = 0xfc8482d5d7623a75ad09721d631d1392 
-Ke = 0x93f618fe24d0d5a54b320f498dbd3ecb 
-KcA = 0x75b20fc4205d6217a22156f918dd03b1 
-KcB = 0x3bf3a5d3876d9d12dc54cab927acd5f7 
-MAC(A) = 0xd4994b751eb832b2836ad674cd615c643053278864a63e263bc2f324b
-9a04ddd 
-MAC(B) = 0x23cf761999b7603adf5507b50c9bda4eaabe8fa7a9ad0280729dfcd00
-8b2bf05 
 
-SPAKE2(A='', B='server') 
-w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
-X = 0x0465e8b4709ba622bc97af5dde3b41757c2114bfc5abb10141245cb01d62ca
-0d7360e1169cd518f9351bbfa44a66cc5f3bcb60661a04f39b04a3d504046db67884
-T = 0x0482f64286419ff46362faf781776edf908740b8ff612e0bfe3c90cdc553ba
-db7f882a4110ee71fa13a693b5ce96ceba5798636555d074648d4521e3b63dc14872
-Y = 0x041aa11299692627a7cac122d4c14606ff700a8be6a0fb1c42f3762d629893
-ab3ca51e4a48c798fc8c6b9dcfda1ad33099ed2f73abe6b3500ce383f54011430c26
-S = 0x04adba3c3b9a74d9769651d09aedb37d22b9471b9e408e2b98fdd4188c12fa
-c731e9dc87e029f7dee0213660ddf0791f50dd8fd32f7152015be0489125b3831b4b
-TT = 0x0600000000000000736572766572410000000000000004adba3c3b9a74d97
-69651d09aedb37d22b9471b9e408e2b98fdd4188c12fac731e9dc87e029f7dee0213
-660ddf0791f50dd8fd32f7152015be0489125b3831b4b41000000000000000482f64
-286419ff46362faf781776edf908740b8ff612e0bfe3c90cdc553badb7f882a4110e
-e71fa13a693b5ce96ceba5798636555d074648d4521e3b63dc148724100000000000
-00004a406929024a5275372531c85c54fd222f35bfdb1cdf1bd1abe82d5c837744d9
-3ea2979962eb374d4feda37b178e91711c52edd453178cf69748e0a3d9ef073c2200
-00000000000007741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee8531
-9d25fede6 
-Ka = 0xcd9c33c6329761919486d0041faccb56 
-Ke = 0xa08125eeed51c61ad93b2ff7d8ec3cd5 
-KcA = 0x60056386cbe06ba199fa6aef81dfb273 
-KcB = 0x5e5a591b4426d47190aecb2fc4527140 
-MAC(A) = 0xf0dcfb4fa874e3fcbadd44b6eb26a64d1d5c6e50034934934551f172d
-3cdc50e 
-MAC(B) = 0x52e7a505c0b73db656108554a854c3f33bfb01edcc1ee52aa27ceb1cb
-ef7f47b 
+spake2: A='', B='client'
+w = 0x0548d8729f730589e579b0475a582c1608138ddf7054b73b5381c7e883e2efae
+x = 0x403abbe3b1b4b9ba17e3032849759d723939a27a27b9d921c500edde18ed654b
+S = 0x04a897b769e681c62ac1c2357319a3d363f610839c4477720d24cbe32f5fd85f
+44fb92ba966578c1b712be6962498834078262caa5b441ecfa9d4a9485720e918a 
+y = 0x903023b6598908936ea7c929bd761af6039577a9c3f9581064187c3049d87065
+T = 0x04e0f816fd1c35e22065d5556215c097e799390d16661c386e0ecc84593974a6
+1b881a8c82327687d0501862970c64565560cb5671f696048050ca66ca5f8cc7fc 
+K = 0x048f83ec9f6e4f87cc6f9dc740bdc2769725f923364f01c84148c049a39a735e
+bda82eac03e00112fd6a5710682767cff5361f7e819e53d8d3c3a2922e0d837aa6 
+TT = 0x00000000000000000600000000000000636c69656e74410000000000000004a
+897b769e681c62ac1c2357319a3d363f610839c4477720d24cbe32f5fd85f44fb92ba9
+66578c1b712be6962498834078262caa5b441ecfa9d4a9485720e918a4100000000000
+00004e0f816fd1c35e22065d5556215c097e799390d16661c386e0ecc84593974a61b8
+81a8c82327687d0501862970c64565560cb5671f696048050ca66ca5f8cc7fc4100000
+000000000048f83ec9f6e4f87cc6f9dc740bdc2769725f923364f01c84148c049a39a7
+35ebda82eac03e00112fd6a5710682767cff5361f7e819e53d8d3c3a2922e0d837aa62
+0000000000000000548d8729f730589e579b0475a582c1608138ddf7054b73b5381c7e
+883e2efae
+Hash(TT) = 0x642f05c473c2cd79909f9a841e2f30a70bf89b18180af97353ba198789c2b963Ke = 0x642f05c473c2cd79909f9a841e2f30a7
+Ka = 0x0bf89b18180af97353ba198789c2b963
+KcA = 0xc6be376fc7cd1301fd0a13adf3e7bffd
+KcB = 0xb7243f4ae60440a49b3f8cab3c1fba07
+A conf = 0x47d29e6666af1b7dd450d571233085d7a9866e4d49d2645e2df975489521232b
+B conf = 0x3313c5cefc361d27fb16847a91c2a73b766ffa90a4839122a9b70a2f6bd1d6df
 
-SPAKE2(A='', B='') 
-w = 0x7741cf8c80b9bee583abac3d38daa6b807fed38b06580cb75ee85319d25fed
-e6 
-X = 0x04fbeb44d6b772fa390fcced51be7316107e608ddf4ab5dcc9f1b2e24bf667
-7f3232cdeeb39a61621a9e48028997d449894212eb54b6f12bdbd9baf8f1c909a740
-T = 0x04887af8439d743215f26d48314835b024b9301ea508eac3a339241672fbba
-09f63e155b1df5d31ccc63babafc00ffff6e258c692aed84a859fd4960d99fcec777
-Y = 0x04bb4727c5c5c50ae34d5148ec6797e5ebf93ae51c5c6cfd48579c41436823
-1ac8769142bf6a0109bd2b86dd901c6054629ce2c6b982326c9cd9a3685c4cf0640d
-S = 0x04665b5101132528be32f4b4762d6ae80273bbe74e151fc2320da373e146ee
-cd33038ff8099782f3781160244672cb43b4d9f2007da9b617c1890845440da0ca53
-TT = 0x410000000000000004665b5101132528be32f4b4762d6ae80273bbe74e151
-fc2320da373e146eecd33038ff8099782f3781160244672cb43b4d9f2007da9b617c
-1890845440da0ca53410000000000000004887af8439d743215f26d48314835b024b
-9301ea508eac3a339241672fbba09f63e155b1df5d31ccc63babafc00ffff6e258c6
-92aed84a859fd4960d99fcec777410000000000000004aacd2378990cecd338c7cac
-d132ce633bc424ac5d4ab32f539ccf31f15deef62463253790e139b461c5137944fc
-6a5ffd895dbe0d3960b01f6d662fc41057a7020000000000000007741cf8c80b9bee
-583abac3d38daa6b807fed38b06580cb75ee85319d25fede6 
-Ka = 0x16b10f1541c24c630f462f7e0aa57ddf 
-Ke = 0xb7ae8b61938e3dfad8b9ce1d2865533f 
-KcA = 0x3398d6c7de402a9ae89a4594d5576c21 
-KcB = 0x6894ab44d7ba7f3a40a772d1476593d9 
-MAC(A) = 0x12fce7f0aecc1dba393a7e5612e6357becc5e3d07cd41ffd35c6d652f
-29cde60 
-MAC(B) = 0xac36c6d186c3b824f4cfe099f035cf3aed4162d08886d32fa1806e5bf
-4015255 
+spake2: A='server', B=''
+w = 0x626e0cdc7b14c9db3e52a0b1b3a768c98e37852d5db30febe0497b14eae8c254
+x = 0x07adb3db6bc623d3399726bfdbfd3d15a58ea776ab8a308b00392621291f9633
+S = 0x04f88fb71c99bfffaea370966b7eb99cd4be0ff1a7d335caac4211c4afd855e2
+e15a873b298503ad8ba1d9cbb9a392d2ba309b48bfd7879aefd0f2cea6009763b0 
+y = 0xb6a4fc8dbb629d4ba51d6f91ed1532cf87adec98f25dd153a75accafafedec16
+T = 0x040c269d6be017dccb15182ac6bfcd9e2a14de019dd587eaf4bdfd353f031101
+e7cca177f8eb362a6e83e7d5e729c0732e1b528879c086f39ba0f31a9661bd34db 
+K = 0x0445ee233b8ecb51ebd6e7da3f307e88a1616bae2166121221fdc0dadb986afa
+f3ec8a988dc9c626fa3b99f58a7ca7c9b844bb3e8dd9554aafc5b53813504c1cbe 
+TT = 0x06000000000000007365727665720000000000000000410000000000000004f
+88fb71c99bfffaea370966b7eb99cd4be0ff1a7d335caac4211c4afd855e2e15a873b2
+98503ad8ba1d9cbb9a392d2ba309b48bfd7879aefd0f2cea6009763b04100000000000
+000040c269d6be017dccb15182ac6bfcd9e2a14de019dd587eaf4bdfd353f031101e7c
+ca177f8eb362a6e83e7d5e729c0732e1b528879c086f39ba0f31a9661bd34db4100000
+0000000000445ee233b8ecb51ebd6e7da3f307e88a1616bae2166121221fdc0dadb986
+afaf3ec8a988dc9c626fa3b99f58a7ca7c9b844bb3e8dd9554aafc5b53813504c1cbe2
+000000000000000626e0cdc7b14c9db3e52a0b1b3a768c98e37852d5db30febe0497b1
+4eae8c254
+Hash(TT) = 0x005184ff460da2ce59062c87733c299c3521297d736598fc0a1127600efa1afbKe = 0x005184ff460da2ce59062c87733c299c
+Ka = 0x3521297d736598fc0a1127600efa1afb
+KcA = 0xf3da53604f0aeecea5a33be7bddf6edf
+KcB = 0x9e3f86848736f159bd92b6e107ec6799
+A conf = 0xbc9f9bbe99f26d0b2260e6456e05a86196a3307ec6663a18bf6ac825736533b2
+B conf = 0xc2370e1bf813b086dff0d834e74425a06e6390f48f5411900276dcccc5a297ec
+
+spake2: A='', B=''
+w = 0x7bf46c454b4c1b25799527d896508afd5fc62ef4ec59db1efb49113063d70cca
+x = 0x8cef65df64bb2d0f83540c53632de911b5b24b3eab6cc74a97609fd659e95473
+S = 0x04a65b367a3f613cf9f0654b1b28a1e3a8a40387956c8ba6063e8658563890f4
+6ca1ef6a676598889fc28de2950ab8120b79a5ef1ea4c9f44bc98f585634b46d66 
+y = 0xd7a66f64074a84652d8d623a92e20c9675c61cb5b4f6a0063e4648a2fdc02d53
+T = 0x04589f13218822710d98d8b2123a079041052d9941b9cf88c6617ddb2fcc0494
+662eea8ba6b64692dc318250030c6af045cb738bc81ba35b043c3dcb46adf6f58d 
+K = 0x041a3c03d51b452537ca2a1fea6110353c6d5ed483c4f0f86f4492ca3f378d40
+a994b4477f93c64d928edbbcd3e85a7c709b7ea73ee97986ce3d1438e135543772 
+TT = 0x00000000000000000000000000000000410000000000000004a65b367a3f613
+cf9f0654b1b28a1e3a8a40387956c8ba6063e8658563890f46ca1ef6a676598889fc28
+de2950ab8120b79a5ef1ea4c9f44bc98f585634b46d66410000000000000004589f132
+18822710d98d8b2123a079041052d9941b9cf88c6617ddb2fcc0494662eea8ba6b6469
+2dc318250030c6af045cb738bc81ba35b043c3dcb46adf6f58d4100000000000000041
+a3c03d51b452537ca2a1fea6110353c6d5ed483c4f0f86f4492ca3f378d40a994b4477
+f93c64d928edbbcd3e85a7c709b7ea73ee97986ce3d1438e1355437722000000000000
+0007bf46c454b4c1b25799527d896508afd5fc62ef4ec59db1efb49113063d70cca
+Hash(TT) = 0xfc6374762ba5cf11f4b2caa08b2cd1b9907ae0e26e8d6234318d91583cd74c86Ke = 0xfc6374762ba5cf11f4b2caa08b2cd1b9
+Ka = 0x907ae0e26e8d6234318d91583cd74c86
+KcA = 0x5dbd2f477166b7fb6d61febbd77a5563
+KcB = 0x7689b4654407a5faeffdc8f18359d8a3
+A conf = 0xdfb4db8d48ae5a675963ea5e6c19d98d4ea028d8e898dad96ea19a80ade95dca
+B conf = 0xd0f0609d1613138d354f7e95f19fb556bf52d751947241e8c7118df5ef0ae175
+
     ]]></artwork></figure>
       </section>
     </section>
