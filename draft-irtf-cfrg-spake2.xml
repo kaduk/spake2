@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-18" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-19" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="January" year="2021"/>
+    <date month="May" year="2021"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -66,7 +66,7 @@
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
       <section title="Setup" anchor="setup">
-        <t>Let G be a group in which the gap Diffie-Hellman (CDH)
+        <t>Let G be a group in which the gap Diffie-Hellman (GDH)
           problem is hard. Suppose G has order p*h where p is a large prime;
           h will be called the cofactor. Let I be the unit element in
           G, e.g., the point at infinity if G is an elliptic curve group. We denote the
@@ -78,7 +78,10 @@
           in the table in this document for common groups, as well as a generator P
           of the (large) prime-order subgroup of G. In the case of a composite order group
 	  we will work in the quotient group. P is specified in the document defining
-          the group, and so we do not repeat it here.</t>
+        the group, and so we do not repeat it here.</t>
+	<t> For elliptic curves other than the ones in this document the methods of <xref target="I-D.irtf-cfrg-hash-to-curve"/>
+	SHOULD be used to generate M and N, e.g. via M = h2c("M SPAKE2 seed OID x"), N= h2c("N SPAKE2 seed OID x") where x is an OID
+	for the curve.</t>
 
         <t>|| denotes concatenation of strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
@@ -106,7 +109,7 @@
           or other names (hostnames, usernames, etc). A and B may share Additional
           Authenticated Data (AAD) of length at most 2^16 - 1 bits that is separate
           from their identities which they may want to include in the protocol execution.
-          One example of AAD is a list of supported protocol versions if SPAKE2(+) were
+          One example of AAD is a list of supported protocol versions if SPAKE2 were
           used in a higher-level protocol which negotiates use of a particular PAKE. Including
           this list would ensure that both parties agree upon the same set of supported protocols
           and therefore prevent downgrade attacks. We also assume A and B share an integer w;
