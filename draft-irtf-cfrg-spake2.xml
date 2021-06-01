@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-19" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-20" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="May" year="2021"/>
+    <date month="June" year="2021"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -47,14 +47,26 @@
   </front>
   <middle>
     <section anchor="intro" title="Introduction">
-      <t>This document describes SPAKE2, a means for two parties that share a password
-        to derive a strong shared key with no risk of disclosing the password.
-        This password-based key exchange protocol is compatible with any group
-        (requiring only a scheme to map a random input of fixed length per group
-        to a random group element), is
-        computationally efficient, and has a security proof.
-        Predetermined parameters for a selection of commonly used groups are
-        also provided for use by other protocols.This document represents the consensus of the Crypto Forum Research Group (CFRG).</t>
+      <t>This document describes SPAKE2, a means for two parties that
+      share a password to derive a strong shared key with no risk of
+      disclosing the password.  This password-based key exchange
+      protocol is compatible with any group (requiring only a scheme
+      to map a random input of fixed length per group to a random
+      group element), is computationally efficient, and has a security
+      proof.  Predetermined parameters for a selection of commonly
+      used groups are also provided for use by other protocols. While
+      not selected as the result of the PAKE selection competition,
+      because of existing use of variants in Kerberos and other
+      applications it was felt publication was beneficial. This RFC
+      represents the individual opinion(s) of one or more members of
+      the Crypto Forum Research Group of the Internet Research Task
+      Force (IRTF).</t>
+      <t> Many of these applications predated methods to hash to
+      elliptic curves being available or predated the publication of
+      the PAKEs that were chosen as an outcome of the PAKE selection
+      competition. In cases where a symmetric PAKE is needed, and
+      hashing onto an elliptic curve at protocol execution time is not
+      available, SPAKE2 is useful.</t>
     </section>
     <section anchor="notation" title="Requirements Notation">
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
@@ -83,10 +95,11 @@
 	SHOULD be used to generate M and N, e.g. via M = h2c("M SPAKE2 seed OID x"), N= h2c("N SPAKE2 seed OID x") where x is an OID
 	for the curve.</t>
 
-        <t>|| denotes concatenation of strings. We also let len(S) denote the
+        <t>|| denotes concatenation of byte strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
           endian number. Finally, let nil represent an empty string, i.e.,
-          len(nil) = 0.</t>
+          len(nil) = 0. Text strings in double quotes are treated as their ASCII encodings
+	throughout this document.</t>
 
         <t>KDF(ikm, salt, info) is a key-derivation function that
           takes as input a salt, intermediate keying material (IKM),
@@ -200,7 +213,7 @@
 
     </section>
     <section title="Key Schedule and Key Confirmation" anchor="keys">
-        <t>The protocol transcript TT, as defined in Section <xref target="spake2"/>, is unique and secret to A and B.
+        <t>The protocol transcript TT, as defined in  <xref target="spake2"/>, is unique and secret to A and B.
             Both parties use TT to derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT), with |Ke| = |Ka|.
             The length of each key is equal to half of the digest output, e.g., 128 bits for SHA-256.</t>
 
@@ -216,7 +229,7 @@
 
         <figure><artwork><![CDATA[
     TT  -> Hash(TT) = Ke || Ka
-    AAD -> KDF(nil, Ka, "ConfirmationKeys" || AAD) = KcA || KcB
+    AAD -> KDF(Ka, nil, "ConfirmationKeys" || AAD) = KcA || KcB
         ]]></artwork></figure>
 
         <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
