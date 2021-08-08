@@ -13,6 +13,7 @@
 <!ENTITY RFC8265 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8265.xml">
 <!ENTITY uks SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
 <!ENTITY h2c SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.draft-irtf-cfrg-hash-to-curve-05.xml">
+<!ENTITY OPAQUE SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-opaque">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
@@ -37,10 +38,10 @@
     </workgroup>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
-      parties that share a password to derive a strong shared key with
-      no risk of disclosing the password. This method is compatible
-      with any group, is computationally efficient, and SPAKE2 has a
-      security proof. This document predated the CFRG PAKE competition
+      parties that share a password to derive a strong shared key 
+      without disclosing the password. This method is compatible
+      with any group, is computationally efficient, and SPAKE2 
+      has a security proof. This document predated the CFRG PAKE competition
       and it was not selected. This document is a product of the
       Crypto Forum Research Group (CFRG) in the IRTF.</t>
     </abstract>
@@ -48,16 +49,16 @@
   <middle>
     <section anchor="intro" title="Introduction">
       <t>This document describes SPAKE2, a means for two parties that
-      share a password to derive a strong shared key with no risk of
+      share a password to derive a strong shared key without
       disclosing the password.  This password-based key exchange
-      protocol is compatible with any group (requiring only a scheme
-      to map a random input of fixed length per group to a random
+      protocol is compatible with any group (requiring only a 
+      scheme to map a random input of fixed length per group to a random
       group element), is computationally efficient, and has a security
       proof.  Predetermined parameters for a selection of commonly
-      used groups are also provided for use by other protocols. While
-      not selected as the result of the PAKE selection competition,
-      because of existing use of variants in Kerberos and other
-      applications it was felt publication was beneficial. This RFC
+      used groups are also provided for use by other protocols.</t>
+      <t>SPAKE2 was not selected as the result of the CFRG PAKE selection 
+      competition. However, given existing use of variants in Kerberos and 
+      other applications it was felt publication was beneficial. This RFC
       represents the individual opinion(s) of one or more members of
       the Crypto Forum Research Group of the Internet Research Task
       Force (IRTF).</t>
@@ -89,17 +90,20 @@
           We fix two elements M and N in the prime-order subgroup of G as defined
           in the table in this document for common groups, as well as a generator P
           of the (large) prime-order subgroup of G. In the case of a composite order group
-	  we will work in the quotient group. P is specified in the document defining
-        the group, and so we do not repeat it here.</t>
-	<t> For elliptic curves other than the ones in this document the methods of <xref target="I-D.irtf-cfrg-hash-to-curve"/>
-	SHOULD be used to generate M and N, e.g. via M = h2c("M SPAKE2 seed OID x"), N= h2c("N SPAKE2 seed OID x") where x is an OID
-	for the curve.</t>
+	        we will work in the quotient group. For common groups used in this document, 
+          P is specified in the document defining the group, and so we do not repeat it here.</t>
+	        
+          <t> For elliptic curves other than the ones in this document the methods of 
+          <xref target="I-D.irtf-cfrg-hash-to-curve"/> SHOULD be used to generate M and N, e.g. via 
+          M = hash_to_curve("M SPAKE2 seed OID x") and N = hash_to_curve("N SPAKE2 seed OID x"), where 
+          x is an OID for the curve. Applications MAY include a DST tag in this step, as specified
+          in <xref target="I-D.irtf-cfrg-hash-to-curve"/>, though this is not required.</t>
 
         <t>|| denotes concatenation of byte strings. We also let len(S) denote the
           length of a string in bytes, represented as an eight-byte little-
           endian number. Finally, let nil represent an empty string, i.e.,
           len(nil) = 0. Text strings in double quotes are treated as their ASCII encodings
-	throughout this document.</t>
+	        throughout this document.</t>
 
         <t>KDF(ikm, salt, info) is a key-derivation function that
           takes as input a salt, intermediate keying material (IKM),
@@ -107,20 +111,20 @@
           cryptographic key of length L. MAC is a Message Authentication
           Code algorithm that takes a secret key and message as input to
           produce an output. Let Hash be a hash function from arbitrary
-        strings to bit strings of a fixed length. Common choices for H
-        are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a
-        memory-hard hash function designed to slow down brute-force
-        attackers. Scrypt <xref target="RFC7914"/> is a common example
-        of this function. The output length of MHF matches that of
-        Hash. Parameter selection for MHF is out of scope for this
-        document.  <xref target="Ciphersuites"/> specifies variants of
-        KDF, MAC, and Hash suitable for use with the protocols
-        contained herein.</t>
+          strings to bit strings of a fixed length. Common choices for H
+          are SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a
+          memory-hard hash function designed to slow down brute-force
+          attackers. Scrypt <xref target="RFC7914"/> is a common example
+          of this function. The output length of MHF matches that of
+          Hash. Parameter selection for MHF is out of scope for this
+          document.  <xref target="Ciphersuites"/> specifies variants of
+          KDF, MAC, and Hash suitable for use with the protocols
+          contained herein.</t>
 
         <t>Let A and B be two parties. A and B may also have digital
           representations of the parties&apos; identities such as Media Access Control addresses
           or other names (hostnames, usernames, etc). A and B may share Additional
-          Authenticated Data (AAD) of length at most 2^16 - 1 bits that is separate
+          Authenticated Data (AAD) of length at most 2^16 - 128 bits that is separate
           from their identities which they may want to include in the protocol execution.
           One example of AAD is a list of supported protocol versions if SPAKE2 were
           used in a higher-level protocol which negotiates use of a particular PAKE. Including
@@ -129,8 +133,8 @@
           typically w = MHF(pw) mod p, for a user-supplied password pw.
           Standards such as NIST.SP.800-56Ar3 suggest taking mod p of a
           hash value that is 64 bits longer than that needed to represent p to remove
-          statistical bias introduced by the modulation. Protocols using this specification must define
-          the method used to compute w: it may be necessary to carry out various
+          statistical bias introduced by the modulation. Protocols using this specification MUST define
+          the method used to compute w. In some cases, it may be necessary to carry out various
           forms of normalization of the password before hashing <xref target="RFC8265" />.
           The hashing algorithm SHOULD be a MHF so as to slow down brute-force
           attackers. </t>
@@ -138,27 +142,30 @@
       </section>
 
       <section title="Protocol Flow" anchor="flow">
-        <t>SPAKE2 is a one round protocol to establish a shared secret with an
-          additional round for key confirmation. Prior to invocation, A and B are provisioned with
+        <t>SPAKE2 is a two round protocol, wherein the first round establishes a shared secret 
+          between A and B, and the second round servers as key confirmation. Prior to invocation, A and B are provisioned with
           information such as the input password needed to run the protocol. 
-          During the first round, A sends a public share pA 
-          to B, and B responds with its own public share pB. Both A and B then derive a shared secret
+          During the first round, A sends a public value pA 
+          to B, and B responds with its own public value pB. Both A and B then derive a shared secret
           used to produce encryption and authentication keys. The latter are used during the second
           round for key confirmation. (<xref target="keys"/> details the key derivation and 
           confirmation steps.) In particular, A sends a key confirmation message cA to B, and B responds
-          with its own key confirmation message cB. Both parties MUST NOT consider the protocol complete
-          prior to receipt and validation of these key confirmation messages.</t>
+          with its own key confirmation message cB. A MUST NOT consider the protocol complete until it
+          receives and verifies cB. Likewise, B MUST NOT consider the protocol complete until it receives
+          and verifies cA.</t>
 
-        <t>This sample trace is shown below.</t>
+        <t>This sample flow is shown below.</t>
         <figure><artwork><![CDATA[
                 A                  B
                 | (setup protocol) |
+                |                  |
   (compute pA)  |        pA        |
                 |----------------->|
                 |        pB        | (compute pB)
                 |<-----------------|
                 |                  | 
                 | (derive secrets) |
+                |                  |
   (compute cA)  |        cA        |
                 |----------------->|
                 |        cB        | (compute cB)
@@ -178,10 +185,11 @@
         because it has received it, and likewise B knows T. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
-        group. This is a common mitigation against this kind of attack.</t>
+        group.</t>
 
-        <t>K is a shared value, though it MUST NOT be used as a shared secret.
-          Both A and B must derive two shared secrets from the protocol transcript.
+        <t>K is a shared value, though it MUST NOT be used or output as a shared secret
+          from the protocol. Both A and B must derive two additional shared secrets from 
+          the protocol transcript, which includes K.
           This prevents man-in-the-middle attackers from inserting themselves into
           the exchange. The transcript TT is encoded as follows:</t>
 
@@ -196,7 +204,7 @@
 
         <t> Here w is encoded as a big endian number padded to the length of p. This representation
         prevents timing attacks that otherwise would reveal the length of w. len(w) is thus a constant.
-	We include it for consistency.</t>
+	      We include it for consistency.</t>
         <t>If an identity is absent, it is encoded as a zero-length string.
         This MUST only be done for applications in which identities are implicit. Otherwise,
         the protocol risks Unknown Key Share attacks (discussion of Unknown Key Share attacks
@@ -204,11 +212,11 @@
 
         <t>Upon completion of this protocol, A and B compute shared secrets Ke, KcA, and KcB as
             specified in <xref target="keys"/>. A MUST send B a key confirmation message
-            so both parties agree upon these shared secrets. This confirmation message F
+            so both parties agree upon these shared secrets. This confirmation message cA
             is computed as a MAC over the protocol transcript TT using KcA, as follows:
-            F = MAC(KcA, TT). Similarly, B MUST send A a confirmation message using a MAC
+            cA = MAC(KcA, TT). Similarly, B MUST send A a confirmation message using a MAC
             computed equivalently except with the use of KcB. Key confirmation verification
-            requires computing F and checking for equality against that which was received.</t>
+            requires computing cB and checking for equality against that which was received.</t>
       </section>
 
     </section>
@@ -219,9 +227,9 @@
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
-            A and B compute them as KcA || KcB = KDF(Ka,nil, "ConfirmationKeys" || AAD), where AAD
+            A and B compute them as KcA || KcB = KDF(Ka, nil, "ConfirmationKeys" || AAD), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
-            The length of each of KcA and KcB is equal to half of the underlying hash  output length, e.g.,
+            The length of each of KcA and KcB is equal to half of the underlying hash output length, e.g.,
             |KcA| = |KcB| = 128 bits for HKDF(SHA256). </t>
 
         <t>The resulting key schedule for this protocol, given transcript TT and additional associated
@@ -237,19 +245,21 @@
     </section>
     <section title="Per-User M and N">
       <t>
-      To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, a variant
-      based on using <xref target="I-D.irtf-cfrg-hash-to-curve"/> is also presented. In this variant, M and N are computed as follows:
+      To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, it is
+      possible to vary M and N using <xref target="I-D.irtf-cfrg-hash-to-curve"/> as follows:
         <figure><artwork><![CDATA[
-    M = h2c(Hash("M for SPAKE2" || len(A) || A || len(B) || B))
-    N = h2c(Hash("N for SPAKE2" || len(A) || A || len(B) || B))
+    M = hash_to_curve(Hash("M SPAKE2" || len(A) || A || len(B) || B))
+    N = hash_to_curve(Hash("N SPAKE2" || len(A) || A || len(B) || B))
                 ]]></artwork></figure>
-		In addition M and N may be equal to have a symmetric variant. The security of these variants is examined in <xref target="MNVAR"/>. This variant may not be suitable for protocols that require the messages to be exchanged symmetrically and do not know the exact identity of the parties before the flow begins.
+		In addition M and N may be equal to have a symmetric variant. The security of these variants is examined 
+    in <xref target="MNVAR"/>. This variant may not be suitable for protocols that require the messages to be 
+    exchanged symmetrically and do not know the exact identity of the parties before the flow begins.
      </t>
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
         <t>
             This section documents SPAKE2 ciphersuite configurations. A ciphersuite
-            indicates a group, cryptographic hash algorithm, and pair of KDF and MAC functions, e.g.,
+            indicates a group, cryptographic hash function, and pair of KDF and MAC functions, e.g.,
             SPAKE2-P256-SHA256-HKDF-HMAC. This ciphersuite indicates a SPAKE2 protocol instance over
             P-256 that uses SHA256 along with HKDF <xref target="RFC5869"/> and HMAC <xref target="RFC2104"/>
             for G, Hash, KDF, and MAC functions, respectively.</t>
@@ -395,26 +405,27 @@ seed: edwards448 point generation seed (N)
       related to knowing discrete logs of M and N.</t>
 
        <t>Elements received from a peer MUST be checked for group
-      membership: failure to properly validate group elements can lead
-      to attacks. It is essential that endpoints verify received points
-      are members of G.</t>
+      membership: failure to properly deserialize and validate group 
+      elements can lead to attacks. An endpoint MUST abort the protocol
+      if any received public value is not a member of G.</t>
 
       <t>The choices of random numbers MUST BE uniform. Randomly
-      generated values (e.g., x and y) MUST NOT be reused; such reuse
-      may permit dictionary attacks on the password. To generate these
-      uniform numbers rejection sampling is recommended. Some
-      implementations of elliptic curve multiplication may leak information
-      about the length of the scalar: these MUST NOT be used.
-      </t>
+      generated values, e.g., x and y, MUST NOT be reused; such reuse
+      may permit dictionary attacks on the password. It is RECOMMENDED
+      to generate these uniform numbers using rejection sampling.</t>
+      
+      <t>Some implementations of elliptic curve multiplication may leak
+      information about the length of the scalar. These MUST NOT be used.</t>
 
       <t>SPAKE2 does not support augmentation. As a result, the server
       has to store a password equivalent. This is considered a
-      significant drawback in some use cases.</t>
+      significant drawback in some use cases. Applications that need
+      augmented PAKEs SHOULD use <xref target="I-D.irtf-cfrg-opaque"/>.</t>
 
-      <t> The HMAC keys in this document are shorter than recommended
+      <t>The HMAC keys in this document are shorter than recommended
       in <xref target="RFC8032" />. This is appropriate as the
       difficulty of the discrete logarithm problem is comparable with
-      the difficulty of brute forcing the keys. </t>
+      the difficulty of brute forcing the keys.</t>
 
     </section>
     <section title="IANA Considerations">
@@ -422,7 +433,7 @@ seed: edwards448 point generation seed (N)
     </section>
     <section title="Acknowledgments">
       <t>Special thanks to Nathaniel McCallum and Greg Hudson for
-      generation of M and N, and Cris Wood for test vectors.  Thanks
+      generation of M and N, and Chris Wood for test vectors.  Thanks
       to Mike Hamburg for advice on how to deal with cofactors. Greg
       Hudson also suggested the addition of warnings on the reuse of x
       and y. Thanks to Fedor Brunner, Adam Langley,Liliya
@@ -504,12 +515,12 @@ seed: edwards448 point generation seed (N)
     </references>
     <section anchor="pointgen" title="Algorithm used for Point Generation">
       <t>This section describes the algorithm that was used to generate
-      the points (M) and (N) in the table in <xref target="Ciphersuites"/>.</t>
+      the points M and N in the table in <xref target="Ciphersuites"/>.</t>
 
       <t>For each curve in the table below, we construct a string
       using the curve OID from <xref target="RFC5480" /> (as an ASCII
       string) or its name,
-      combined with the needed constant, for instance "1.3.132.0.35
+      combined with the needed constant, e.g., "1.3.132.0.35
       point generation seed (M)" for P-512.  This string is turned
       into a series of blocks by hashing with SHA256, and hashing that
       output again to generate the next 32 bytes, and so on.  This
@@ -584,7 +595,7 @@ def gen_point(seed, ecname, ec):
     <section anchor="testvectors" title="Test Vectors">
       <t>This section contains test vectors for SPAKE2 using 
         the P256-SHA256-HKDF-HMAC ciphersuite. (Choice of MHF is omitted
-        and values for w,x and y are provided directly.) All points are 
+        and values for w, x, and y are provided directly.) All points are 
         encoded using the uncompressed format, i.e., with a 0x04 octet
         prefix, specified in <xref target="SEC1"/> A and B identity strings
         are provided in the protocol invocation.
