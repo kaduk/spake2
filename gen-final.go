@@ -14,7 +14,7 @@ func complete(A string, B string, TT []byte) {
 	h := sha256.New()
 	h.Write(TT)
 	hashTT := h.Sum(nil)
-	fmt.Printf("Hash(TT) = 0x%x", hashTT)
+	fmt.Printf("Hash(TT) = 0x%x\n", hashTT)
 	Ke := hashTT[:16]
 	Ka := hashTT[16:]
 	fmt.Printf("Ke = 0x%x\n", Ke)
