@@ -11,13 +11,12 @@
 <!ENTITY RFC8032 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8032.xml">
 <!ENTITY RFC8174 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8265 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8265.xml">
-<!ENTITY uks SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mmusic-sdp-uks">
 <!ENTITY h2c SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.draft-irtf-cfrg-hash-to-curve-05.xml">
-<!ENTITY OPAQUE SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.irtf-cfrg-opaque">
+<!ENTITY opaque SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.draft-irtf-cfrg-opaque-06.xml">
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-20" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-21" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -32,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="June" year="2021"/>
+    <date month="August" year="2021"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -519,7 +518,7 @@ seed: edwards448 point generation seed (N)
         </annotation>
       </reference>
       &RFC8265;
-      &uks;
+      &opaque;
     </references>
     <section anchor="pointgen" title="Algorithm used for Point Generation">
       <t>This section describes the algorithm that was used to generate
