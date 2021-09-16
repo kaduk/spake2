@@ -167,15 +167,15 @@
                 |----------------->|
                 |        pB        | (compute pB)
                 |<-----------------|
-                |                  | 
+                |                  |
                 | (derive secrets) |
                 |                  |
   (compute cA)  |        cA        |
                 |----------------->|
                 |        cB        | (compute cB)
-		|                  | (check cA)
+                |                  | (check cA)
                 |<-----------------|
-  (check cB)	|                  |
+  (check cB)    |                  |
         ]]></artwork></figure>
       </section>
 
