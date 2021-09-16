@@ -143,7 +143,7 @@
 
       <section title="Protocol Flow" anchor="flow">
         <t>SPAKE2 is a two round protocol, wherein the first round establishes a shared secret 
-          between A and B, and the second round server as key confirmation. Prior to invocation, A and B are provisioned with
+          between A and B, and the second round serves as key confirmation. Prior to invocation, A and B are provisioned with
           information such as the input password needed to run the protocol. We assume that the roles of A and B
 	  are agreed upon by both sides: A goes first and uses M, and B goes second and uses N. If this assignment
 	  of roles is not possible a symmetric variant described later MUST be used. For instance A may be the client when
