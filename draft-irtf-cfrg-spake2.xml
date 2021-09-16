@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-21" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-22" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="August" year="2021"/>
+    <date month="September" year="2021"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -105,7 +105,7 @@
           len(nil) = 0. Text strings in double quotes are treated as their ASCII encodings
 	        throughout this document.</t>
 
-        <t>KDF(ikm, salt, info) is a key-derivation function that
+        <t>KDF(ikm, salt, info, L) is a key-derivation function that
         takes as input a salt, intermediate keying material (IKM),
         info string, and derived key length L to derive a
         cryptographic key of length L. MAC is a Message Authentication
@@ -143,8 +143,12 @@
 
       <section title="Protocol Flow" anchor="flow">
         <t>SPAKE2 is a two round protocol, wherein the first round establishes a shared secret 
-          between A and B, and the second round servers as key confirmation. Prior to invocation, A and B are provisioned with
-          information such as the input password needed to run the protocol. 
+          between A and B, and the second round serves as key confirmation. Prior to invocation, A and B are provisioned with
+          information such as the input password needed to run the protocol. We assume that the roles of A and B
+	  are agreed upon by both sides: A goes first and uses M, and B goes second and uses N. If this assignment
+	  of roles is not possible a symmetric variant described later MUST be used. For instance A may be the client when
+	  using TCP or TLS as an underlying protocol and B the server. Most protocols have such a distinction.
+
           During the first round, A sends a public value pA 
           to B, and B responds with its own public value pB. Both A and B then derive a shared secret
           used to produce encryption and authentication keys. The latter are used during the second
@@ -163,26 +167,28 @@
                 |----------------->|
                 |        pB        | (compute pB)
                 |<-----------------|
-                |                  | 
+                |                  |
                 | (derive secrets) |
                 |                  |
   (compute cA)  |        cA        |
                 |----------------->|
                 |        cB        | (compute cB)
+                |                  | (check cA)
                 |<-----------------|
+  (check cB)    |                  |
         ]]></artwork></figure>
       </section>
 
       <section title="SPAKE2" anchor="spake2">
         <t>To begin, A picks x randomly and uniformly from the integers in [0,p),
-            and calculates X=x*P and S=w*M+X, then transmits pA=S to B.</t>
+            and calculates X=x*P and pA=w*M+X, then transmits pA to B.</t>
 
         <t>B selects y randomly and uniformly from the integers in [0,p), and calculates
-            Y=y*P, T=w*N+Y, then transmits pB=T to A.</t>
+            Y=y*P, pB=w*N+Y, then transmits pB to A.</t>
 
         <t>Both A and B calculate a group element K. A calculates it
-        as h*x*(T-w*N), while B calculates it as h*y*(S-w*M). A knows S
-        because it has received it, and likewise B knows T. The
+        as h*x*(pB-w*N), while B calculates it as h*y*(pA-w*M). A knows pB
+        because it has received it, and likewise B knows pA. The
         multiplication by h prevents small subgroup confinement
         attacks by computing a unique value in the quotient
         group.</t>
@@ -194,12 +200,12 @@
           the exchange. The transcript TT is encoded as follows:</t>
 
         <figure><artwork><![CDATA[
-        TT = len(A) || A
-          || len(B) || B
-          || len(S) || S
-          || len(T) || T
-          || len(K) || K
-          || len(w) || w
+        TT = len(A)  || A
+          || len(B)  || B
+          || len(pA) || pA
+          || len(pB) || pB
+          || len(K)  || K
+          || len(w)  || w
         ]]></artwork></figure>
 
         <t> Here w is encoded as a big endian number padded to the length of p. This representation
@@ -222,14 +228,15 @@
     <section title="Key Schedule and Key Confirmation" anchor="keys">
         <t>The protocol transcript TT, as defined in  <xref target="spake2"/>, is unique and secret to A and B.
             Both parties use TT to derive shared symmetric secrets Ke and Ka as Ke || Ka = Hash(TT), with |Ke| = |Ka|.
-            The length of each key is equal to half of the digest output, e.g., 128 bits for SHA-256.</t>
+            The length of each key is equal to half of the digest output, e.g., 128 bits for SHA-256. Keys MUST be at least
+	128 bits in length.</t>
 
         <t>Both endpoints use Ka to derive subsequent MAC keys for key confirmation messages.
             Specifically, let KcA and KcB be the MAC keys used by A and B, respectively.
-            A and B compute them as KcA || KcB = KDF(Ka, nil, "ConfirmationKeys" || AAD), where AAD
+            A and B compute them as KcA || KcB = KDF(Ka, nil, "ConfirmationKeys" || AAD, L), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
             The length of each of KcA and KcB is equal to half of the underlying hash output length, e.g.,
-            |KcA| = |KcB| = 128 bits for HKDF(SHA256). </t>
+            |KcA| = |KcB| = 128 bits for HKDF(SHA256), with L=256 bits. </t>
 
         <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
@@ -242,7 +249,7 @@
         <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
             used for anything except key confirmation.</t>
     </section>
-    <section title="Per-User M and N">
+    <section title="Per-User M and N and M=N">
       <t>
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, it is
       possible to vary M and N using <xref target="I-D.irtf-cfrg-hash-to-curve"/> as follows:
@@ -252,7 +259,14 @@
     ]]></artwork></figure>
 	
 	In addition M and N may be equal to have a symmetric
-	variant. The security of these variants is examined in <xref
+	variant. For this variant we set
+	<figure><artwork><![CDATA[
+    M = hash_to_curve(Hash("M AND N SPAKE2"))
+    ]]></artwork></figure>
+
+	This variant MUST be used when it is not possible to determine which of A and B
+	should use M or N, due to asymmetries in the protocol flows or the desire to use only a single shared secret with
+	nil identities for authentication. The security of these variants is examined in <xref
 	target="MNVAR"/>. The variant with per-user M and N may not be
 	suitable for protocols that require the initial messages to be
 	generated by each party at the same time and do not know the
@@ -613,10 +627,10 @@ def gen_point(seed, ecname, ec):
 spake2: A='server', B='client'
 w = 0x2ee57912099d31560b3a44b1184b9b4866e904c49d12ac5042c97dca461b1a5f
 x = 0x43dd0fd7215bdcb482879fca3220c6a968e66d70b1356cac18bb26c84a78d729
-S = 0x04a56fa807caaa53a4d28dbb9853b9815c61a411118a6fe516a8798434751470
+pA = 0x04a56fa807caaa53a4d28dbb9853b9815c61a411118a6fe516a8798434751470
 f9010153ac33d0d5f2047ffdb1a3e42c9b4e6be662766e1eeb4116988ede5f912c 
 y = 0xdcb60106f276b02606d8ef0a328c02e4b629f84f89786af5befb0bc75b6e66be
-T = 0x0406557e482bd03097ad0cbaa5df82115460d951e3451962f1eaf4367a420676
+pB = 0x0406557e482bd03097ad0cbaa5df82115460d951e3451962f1eaf4367a420676
 d09857ccbc522686c83d1852abfa8ed6e4a1155cf8f1543ceca528afb591a1e0b7 
 K = 0x0412af7e89717850671913e6b469ace67bd90a4df8ce45c2af19010175e37eed
 69f75897996d539356e2fa6a406d528501f907e04d97515fbe83db277b715d3325 
@@ -641,10 +655,10 @@ B conf = 0xd3e2e547f1ae04f2dbdbf0fc4b79f8ecff2dff314b5d32fe9fcef2fb26dc459b
 spake2: A='', B='client'
 w = 0x0548d8729f730589e579b0475a582c1608138ddf7054b73b5381c7e883e2efae
 x = 0x403abbe3b1b4b9ba17e3032849759d723939a27a27b9d921c500edde18ed654b
-S = 0x04a897b769e681c62ac1c2357319a3d363f610839c4477720d24cbe32f5fd85f
+pA = 0x04a897b769e681c62ac1c2357319a3d363f610839c4477720d24cbe32f5fd85f
 44fb92ba966578c1b712be6962498834078262caa5b441ecfa9d4a9485720e918a 
 y = 0x903023b6598908936ea7c929bd761af6039577a9c3f9581064187c3049d87065
-T = 0x04e0f816fd1c35e22065d5556215c097e799390d16661c386e0ecc84593974a6
+pB = 0x04e0f816fd1c35e22065d5556215c097e799390d16661c386e0ecc84593974a6
 1b881a8c82327687d0501862970c64565560cb5671f696048050ca66ca5f8cc7fc 
 K = 0x048f83ec9f6e4f87cc6f9dc740bdc2769725f923364f01c84148c049a39a735e
 bda82eac03e00112fd6a5710682767cff5361f7e819e53d8d3c3a2922e0d837aa6 
@@ -668,10 +682,10 @@ B conf = 0x3313c5cefc361d27fb16847a91c2a73b766ffa90a4839122a9b70a2f6bd1d6df
 spake2: A='server', B=''
 w = 0x626e0cdc7b14c9db3e52a0b1b3a768c98e37852d5db30febe0497b14eae8c254
 x = 0x07adb3db6bc623d3399726bfdbfd3d15a58ea776ab8a308b00392621291f9633
-S = 0x04f88fb71c99bfffaea370966b7eb99cd4be0ff1a7d335caac4211c4afd855e2
+pA = 0x04f88fb71c99bfffaea370966b7eb99cd4be0ff1a7d335caac4211c4afd855e2
 e15a873b298503ad8ba1d9cbb9a392d2ba309b48bfd7879aefd0f2cea6009763b0 
 y = 0xb6a4fc8dbb629d4ba51d6f91ed1532cf87adec98f25dd153a75accafafedec16
-T = 0x040c269d6be017dccb15182ac6bfcd9e2a14de019dd587eaf4bdfd353f031101
+pB = 0x040c269d6be017dccb15182ac6bfcd9e2a14de019dd587eaf4bdfd353f031101
 e7cca177f8eb362a6e83e7d5e729c0732e1b528879c086f39ba0f31a9661bd34db 
 K = 0x0445ee233b8ecb51ebd6e7da3f307e88a1616bae2166121221fdc0dadb986afa
 f3ec8a988dc9c626fa3b99f58a7ca7c9b844bb3e8dd9554aafc5b53813504c1cbe 
@@ -695,10 +709,10 @@ B conf = 0xc2370e1bf813b086dff0d834e74425a06e6390f48f5411900276dcccc5a297ec
 spake2: A='', B=''
 w = 0x7bf46c454b4c1b25799527d896508afd5fc62ef4ec59db1efb49113063d70cca
 x = 0x8cef65df64bb2d0f83540c53632de911b5b24b3eab6cc74a97609fd659e95473
-S = 0x04a65b367a3f613cf9f0654b1b28a1e3a8a40387956c8ba6063e8658563890f4
+pA = 0x04a65b367a3f613cf9f0654b1b28a1e3a8a40387956c8ba6063e8658563890f4
 6ca1ef6a676598889fc28de2950ab8120b79a5ef1ea4c9f44bc98f585634b46d66 
 y = 0xd7a66f64074a84652d8d623a92e20c9675c61cb5b4f6a0063e4648a2fdc02d53
-T = 0x04589f13218822710d98d8b2123a079041052d9941b9cf88c6617ddb2fcc0494
+pB = 0x04589f13218822710d98d8b2123a079041052d9941b9cf88c6617ddb2fcc0494
 662eea8ba6b64692dc318250030c6af045cb738bc81ba35b043c3dcb46adf6f58d 
 K = 0x041a3c03d51b452537ca2a1fea6110353c6d5ed483c4f0f86f4492ca3f378d40
 a994b4477f93c64d928edbbcd3e85a7c709b7ea73ee97986ce3d1438e135543772 
