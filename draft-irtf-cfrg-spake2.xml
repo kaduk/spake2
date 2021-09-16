@@ -236,7 +236,7 @@
             A and B compute them as KcA || KcB = KDF(Ka, nil, "ConfirmationKeys" || AAD, L), where AAD
             is the associated data each given to each endpoint, or nil if none was provided.
             The length of each of KcA and KcB is equal to half of the underlying hash output length, e.g.,
-            |KcA| = |KcB| = 128 bits for HKDF(SHA256), and L=256 bits. </t>
+            |KcA| = |KcB| = 128 bits for HKDF(SHA256), with L=256 bits. </t>
 
         <t>The resulting key schedule for this protocol, given transcript TT and additional associated
             data AAD, is as follows.</t>
