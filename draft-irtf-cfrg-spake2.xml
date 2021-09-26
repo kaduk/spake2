@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-22" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-23" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -441,7 +441,7 @@ seed: edwards448 point generation seed (N)
       <t>SPAKE2 does not support augmentation. As a result, the server
       has to store a password equivalent. This is considered a
       significant drawback in some use cases. Applications that need
-      augmented PAKEs SHOULD use <xref target="I-D.irtf-cfrg-opaque"/>.</t>
+      augmented PAKEs should use <xref target="I-D.irtf-cfrg-opaque"/>.</t>
 
       <t>The HMAC keys in this document are shorter than recommended
       in <xref target="RFC8032" />. This is appropriate as the
@@ -457,7 +457,7 @@ seed: edwards448 point generation seed (N)
       generation of M and N, and Chris Wood for test vectors.  Thanks
       to Mike Hamburg for advice on how to deal with cofactors. Greg
       Hudson also suggested the addition of warnings on the reuse of x
-      and y. Thanks to Fedor Brunner, Adam Langley,Liliya
+      and y. Thanks to Fedor Brunner, Adam Langley, Liliya
       Akhmetzyanova, and the members of the CFRG for comments and
       advice. Thanks to Scott Fluhrer and those Crypto Panel experts
       involved in the PAKE selection process
@@ -503,7 +503,7 @@ seed: edwards448 point generation seed (N)
 	  <date month="August" year="2020"/>
 	</front>
 	<annotation> Appears in Micciancio D., Ristenpart T. (eds)
-	Advances in Cryptology -CRYPTO 20202. Crypto 20202. Lecture
+	Advances in Cryptology -CRYPTO 2020. Crypto 2020. Lecture
 	notes in Computer Science volume 12170. Springer.</annotation>
       </reference>
       <reference anchor="REF">
