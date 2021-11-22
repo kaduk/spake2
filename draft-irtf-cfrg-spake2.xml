@@ -16,7 +16,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-22" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-24" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -37,12 +37,15 @@
     </workgroup>
     <abstract>
       <t>This document describes SPAKE2 which is a protocol for two
-      parties that share a password to derive a strong shared key 
-      without disclosing the password. This method is compatible
-      with any group, is computationally efficient, and SPAKE2 
-      has a security proof. This document predated the CFRG PAKE competition
-      and it was not selected. This document is a product of the
-      Crypto Forum Research Group (CFRG) in the IRTF.</t>
+      parties that share a password to derive a strong shared key
+      without disclosing the password. This method is compatible with
+      any group, is computationally efficient, and SPAKE2 has a
+      security proof. This document predated the CFRG PAKE competition
+      and it was not selected, however, given existing use of variants
+      in Kerberos and other applications it was felt publication was
+      beneficial. Applications that need a symmetric PAKE and where hashing onto an elliptic curve
+      at execution time is not possible can use SPAKE2. This document is a product of the Crypto Forum
+      Research Group (CFRG) in the IRTF.</t>
     </abstract>
   </front>
   <middle>
@@ -146,7 +149,7 @@
           between A and B, and the second round serves as key confirmation. Prior to invocation, A and B are provisioned with
           information such as the input password needed to run the protocol. We assume that the roles of A and B
 	  are agreed upon by both sides: A goes first and uses M, and B goes second and uses N. If this assignment
-	  of roles is not possible a symmetric variant described later MUST be used. For instance A may be the client when
+	  of roles is not possible a symmetric variant MUST be used as described later <xref target="variants"/>. For instance A may be the client when
 	  using TCP or TLS as an underlying protocol and B the server. Most protocols have such a distinction.
 
           During the first round, A sends a public value pA 
@@ -249,7 +252,7 @@
         <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
             used for anything except key confirmation.</t>
     </section>
-    <section title="Per-User M and N and M=N">
+    <section title="Per-User M and N and M=N" target="variants">
       <t>
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, it is
       possible to vary M and N using <xref target="I-D.irtf-cfrg-hash-to-curve"/> as follows:
@@ -258,8 +261,7 @@
     N = hash_to_curve(Hash("N SPAKE2" || len(A) || A || len(B) || B))
     ]]></artwork></figure>
 	
-	In addition M and N may be equal to have a symmetric
-	variant. For this variant we set
+	There is also a symmetric variant where M=N. For this variant we set
 	<figure><artwork><![CDATA[
     M = hash_to_curve(Hash("M AND N SPAKE2"))
     ]]></artwork></figure>
