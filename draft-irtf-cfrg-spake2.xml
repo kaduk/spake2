@@ -80,6 +80,46 @@
         appear in all capitals, as shown here.</t>
     </section>
     <section anchor="definition" title="Definition of SPAKE2">
+                <section title="Protocol Flow" anchor="flow">
+        <t>SPAKE2 is a two round protocol, wherein the first round establishes a shared secret
+          between A and B, and the second round serves as key confirmation. Prior to invocation, A and B are provisioned with
+          information such as the input password needed to run the protocol. We assume that the roles of A and B
+	  are agreed upon by both sides: A goes first and uses M, and B goes second and uses N. If this assignment
+	  of roles is not possible a symmetric variant MUST be used as described later <xref target="variants"/>. For instance A may be the client when
+	  using TCP or TLS as an underlying protocol and B the server. Most protocols have such a distinction.
+
+          During the first round, A sends a public value pA to B, and
+          B responds with its own public value pB. Both A and B then
+          derive a shared secret used to produce encryption and
+          authentication keys. The latter are used during the second
+          round for key confirmation. (<xref target="keys"/> details
+          the key derivation and confirmation steps.) In particular, A
+          sends a key confirmation message cA to B, and B responds
+          with its own key confirmation message cB. A MUST NOT
+          consider the protocol complete until it receives and
+          verifies cB. Likewise, B MUST NOT consider the protocol
+          complete until it receives and verifies cA.</t>
+
+        <t>This sample flow is shown below.</t>
+        <figure><artwork><![CDATA[
+                A                  B
+                | (setup protocol) |
+                |                  |
+  (compute pA)  |        pA        |
+                |----------------->|
+                |        pB        | (compute pB)
+                |<-----------------|
+                |                  |
+                | (derive secrets) |
+                |                  |
+  (compute cA)  |        cA        |
+                |----------------->|
+                |        cB        | (compute cB)
+                |                  | (check cA)
+                |<-----------------|
+  (check cB)    |                  |
+        ]]></artwork></figure>
+      </section>
       <section title="Setup" anchor="setup">
         <t>Let G be a group in which the gap Diffie-Hellman (GDH)
           problem is hard. Suppose G has order p*h where p is a large prime;
@@ -142,44 +182,6 @@
           The hashing algorithm SHOULD be a MHF so as to slow down brute-force
           attackers. </t>
 
-      </section>
-
-      <section title="Protocol Flow" anchor="flow">
-        <t>SPAKE2 is a two round protocol, wherein the first round establishes a shared secret 
-          between A and B, and the second round serves as key confirmation. Prior to invocation, A and B are provisioned with
-          information such as the input password needed to run the protocol. We assume that the roles of A and B
-	  are agreed upon by both sides: A goes first and uses M, and B goes second and uses N. If this assignment
-	  of roles is not possible a symmetric variant MUST be used as described later <xref target="variants"/>. For instance A may be the client when
-	  using TCP or TLS as an underlying protocol and B the server. Most protocols have such a distinction.
-
-          During the first round, A sends a public value pA 
-          to B, and B responds with its own public value pB. Both A and B then derive a shared secret
-          used to produce encryption and authentication keys. The latter are used during the second
-          round for key confirmation. (<xref target="keys"/> details the key derivation and 
-          confirmation steps.) In particular, A sends a key confirmation message cA to B, and B responds
-          with its own key confirmation message cB. A MUST NOT consider the protocol complete until it
-          receives and verifies cB. Likewise, B MUST NOT consider the protocol complete until it receives
-          and verifies cA.</t>
-
-        <t>This sample flow is shown below.</t>
-        <figure><artwork><![CDATA[
-                A                  B
-                | (setup protocol) |
-                |                  |
-  (compute pA)  |        pA        |
-                |----------------->|
-                |        pB        | (compute pB)
-                |<-----------------|
-                |                  |
-                | (derive secrets) |
-                |                  |
-  (compute cA)  |        cA        |
-                |----------------->|
-                |        cB        | (compute cB)
-                |                  | (check cA)
-                |<-----------------|
-  (check cB)    |                  |
-        ]]></artwork></figure>
       </section>
 
       <section title="SPAKE2" anchor="spake2">
