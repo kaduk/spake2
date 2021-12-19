@@ -372,9 +372,9 @@ Internet Draft                cfrg-spake2               13 February 2016
    March 2009. 
 
 Author Addresses
-   Watson Ladd
-   watsonbladd@gmail.com
-   Berkeley, CA
+   guanlonghuang
+   gl041188@gmail.com
+   south Africa, cape Town
 
 
 
