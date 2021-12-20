@@ -151,18 +151,19 @@
         <t>KDF(ikm, salt, info, L) is a key-derivation function that
         takes as input a salt, intermediate keying material (IKM),
         info string, and derived key length L to derive a
-        cryptographic key of length L. MAC is a Message Authentication
-        Code algorithm that takes a secret key and message as input to
-        produce an output. Let Hash be a hash function from arbitrary
-        strings to bit strings of a fixed length, at least 32 bytes
-        long. Common choices for H are SHA256 or SHA512 <xref
-        target="RFC6234"/>. Let MHF be a memory-hard hash function
-        designed to slow down brute-force attackers. Scrypt <xref
-        target="RFC7914"/> is a common example of this function. The
-        output length of MHF matches that of Hash. Parameter selection
-        for MHF is out of scope for this document.  <xref
-        target="Ciphersuites"/> specifies variants of KDF, MAC, and
-        Hash suitable for use with the protocols contained herein.</t>
+        cryptographic key of length L. MAC(key, message) is a Message
+        Authentication Code algorithm that takes a secret key and
+        message as input to produce an output.  Let Hash be a hash
+        function from arbitrary strings to bit strings of a fixed
+        length, at least 256 bits long. Common choices for Hash are
+        SHA256 or SHA512 <xref target="RFC6234"/>. Let MHF be a
+        memory-hard hash function designed to slow down brute-force
+        attackers. Scrypt <xref target="RFC7914"/> is a common example
+        of this function. The output length of MHF matches that of
+        Hash. Parameter selection for MHF is out of scope for this
+        document.  <xref target="Ciphersuites"/> specifies variants of
+        KDF, MAC, and Hash suitable for use with the protocols
+        contained herein.</t>
 
         <t>Let A and B be two parties. A and B may also have digital
           representations of the parties&apos; identities such as Media Access Control addresses
@@ -279,11 +280,16 @@
     </section>
     <section title="Ciphersuites" anchor="Ciphersuites">
         <t>
-            This section documents SPAKE2 ciphersuite configurations. A ciphersuite
-            indicates a group, cryptographic hash function, and pair of KDF and MAC functions, e.g.,
-            SPAKE2-P256-SHA256-HKDF-HMAC. This ciphersuite indicates a SPAKE2 protocol instance over
-            P-256 that uses SHA256 along with HKDF <xref target="RFC5869"/> and HMAC <xref target="RFC2104"/>
-            for G, Hash, KDF, and MAC functions, respectively.</t>
+            This section documents SPAKE2 ciphersuite
+            configurations. A ciphersuite indicates a group,
+            cryptographic hash function, and pair of KDF and MAC
+            functions, e.g., SPAKE2-P256-SHA256-HKDF-HMAC. This
+            ciphersuite indicates a SPAKE2 protocol instance over
+            P-256 that uses SHA256 along with HKDF <xref
+            target="RFC5869"/> and HMAC <xref target="RFC2104"/> for
+            G, Hash, KDF, and MAC functions, respectively. For Ed25519
+            the compressed encoding is used <xref target="RFC8032"/>,
+            all others use the uncompressed SEC1 encoding.</t>
 
             <texttable anchor="spake2_ciphersuites" title="SPAKE2 Ciphersuites">
                 <ttcol align='center'>G</ttcol>
@@ -315,14 +321,14 @@
                 <c>HKDF <xref target="RFC5869"/></c>
                 <c>HMAC <xref target="RFC2104"/></c>
 
-                <!-- P512-SHA512-HKDF-HMAC -->
-                <c>P-512</c>
+                <!-- P521-SHA512-HKDF-HMAC -->
+                <c>P-521</c>
                 <c>SHA512 <xref target="RFC6234"/></c>
                 <c>HKDF <xref target="RFC5869"/></c>
                 <c>HMAC <xref target="RFC2104"/></c>
 
                 <!-- edwards25519-SHA256-HKDF-HMAC -->
-                <c>edwards25519 <xref target="RFC7748"/></c>
+                <c>edwards25519 <xref target="RFC8032"/></c>
                 <c>SHA256 <xref target="RFC6234"/></c>
                 <c>HKDF <xref target="RFC5869"/></c>
                 <c>HMAC <xref target="RFC2104"/></c>
@@ -480,7 +486,7 @@ seed: edwards448 point generation seed (N)
       &RFC5480;
       &RFC5869;
       &RFC6234;
-      &RFC7748;
+      &RFC8032;
       &RFC7914;
       &RFC8032;
       &RFC8174;
@@ -546,7 +552,7 @@ seed: edwards448 point generation seed (N)
       using the curve OID from <xref target="RFC5480" /> (as an ASCII
       string) or its name,
       combined with the needed constant, e.g., "1.3.132.0.35
-      point generation seed (M)" for P-512.  This string is turned
+      point generation seed (M)" for P-521.  This string is turned
       into a series of blocks by hashing with SHA256, and hashing that
       output again to generate the next 32 bytes, and so on.  This
       pattern is repeated for each group and value, with the string
