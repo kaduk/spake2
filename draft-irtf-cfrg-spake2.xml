@@ -20,7 +20,7 @@
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
-      <organization>Cloudflare</organization>
+      <organization>Sealance</organization>
       <address>
         <email>watsonbladd@gmail.com</email>
       </address>
@@ -31,7 +31,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="September" year="2021"/>
+    <date month="November" year="2021"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -255,7 +255,7 @@
         <t>A and B output Ke as the shared secret from the protocol. Ka and its derived keys are not
             used for anything except key confirmation.</t>
     </section>
-    <section title="Per-User M and N and M=N" target="variants">
+    <section title="Per-User M and N and M=N" anchor="variants">
       <t>
       To avoid concerns that an attacker needs to solve a single ECDH instance to break the authentication of SPAKE2, it is
       possible to vary M and N using <xref target="I-D.irtf-cfrg-hash-to-curve"/> as follows:
@@ -438,7 +438,8 @@ seed: edwards448 point generation seed (N)
 
       <t>The choices of random numbers MUST BE uniform. Randomly
       generated values, e.g., x and y, MUST NOT be reused; such reuse
-      may permit dictionary attacks on the password. It is RECOMMENDED
+      violates the security assumptions of the protocol and results in significant insecurity.
+      It is RECOMMENDED
       to generate these uniform numbers using rejection sampling.</t>
       
       <t>Some implementations of elliptic curve multiplication may
