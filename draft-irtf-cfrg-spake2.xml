@@ -6,7 +6,6 @@
 <!ENTITY RFC5480 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5480.xml">
 <!ENTITY RFC5869 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5869.xml">
 <!ENTITY RFC6234 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6234.xml">
-<!ENTITY RFC7748 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7748.xml">
 <!ENTITY RFC7914 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7914.xml">
 <!ENTITY RFC8032 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8032.xml">
 <!ENTITY RFC8174 SYSTEM "http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
@@ -334,7 +333,7 @@
                 <c>HMAC <xref target="RFC2104"/></c>
 
                 <!-- edwards448-SHA512-HKDF-HMAC -->
-                <c>edwards448 <xref target="RFC7748"/></c>
+                <c>edwards448 <xref target="RFC8032"/></c>
                 <c>SHA512 <xref target="RFC6234"/></c>
                 <c>HKDF <xref target="RFC5869"/></c>
                 <c>HMAC <xref target="RFC2104"/></c>
