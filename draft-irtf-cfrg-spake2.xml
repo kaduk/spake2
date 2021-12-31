@@ -487,7 +487,6 @@ seed: edwards448 point generation seed (N)
       &RFC5480;
       &RFC5869;
       &RFC6234;
-      &RFC8032;
       &RFC7914;
       &RFC8032;
       &RFC8174;
