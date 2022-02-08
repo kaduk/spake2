@@ -15,7 +15,7 @@
 ]>
 <?rfc toc="yes"?>
 <?rfc tocdepth="1"?>
-<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-25" submissionType="IRTF">
+<rfc category="info" ipr="trust200902" docName="draft-irtf-cfrg-spake2-26" submissionType="IRTF">
   <front>
     <title>SPAKE2, a PAKE</title>
     <author fullname="Watson Ladd" initials="W." surname="Ladd">
@@ -30,7 +30,7 @@
         <email>kaduk@mit.edu</email>
       </address>
     </author>
-    <date month="December" year="2021"/>
+    <date month="February" year="2022"/>
     <workgroup>
       Internet Research Task Force
     </workgroup>
@@ -42,7 +42,7 @@
       security proof. This document predated the CFRG PAKE competition
       and it was not selected, however, given existing use of variants
       in Kerberos and other applications it was felt publication was
-      beneficial. Applications that need a symmetric PAKE and where hashing onto an elliptic curve
+      beneficial. Applications that need a symmetric PAKE (password authenticated key exchange) and where hashing onto an elliptic curve
       at execution time is not possible can use SPAKE2. This document is a product of the Crypto Forum
       Research Group (CFRG) in the IRTF.</t>
     </abstract>
